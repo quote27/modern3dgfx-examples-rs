@@ -34,10 +34,14 @@ SOURCE_FILES = $(shell test -e src/ && find src -type f)
 
 COMPILER = rustc
 
+LIBS = -Llib/glfw-rs/lib -Llib/gl-rs/lib
+
 # For release:
   COMPILER_FLAGS = -O
 # For debugging:
 # COMPILER_FLAGS = -g
+
+COMPILER_FLAGS+=$(LIBS)
 
 RUSTDOC = rustdoc 
 
