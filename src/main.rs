@@ -24,100 +24,77 @@ use glfw::Context;
 use std::cast;
 use std::mem;
 use std::ptr;
-use std::str;
 
-// Vertex data
-static VERTEX_DATA: [GLfloat, ..12] = [
-    0.75,  1.75, 0.0, 1.0,
+mod shaders;
+
+/* // frag color tut
+static vertex_data: [GLfloat, ..12] = [
+    0.75,  0.75, 0.0, 1.0,
     0.75, -0.75, 0.0, 1.0,
    -0.75, -0.75, 0.0, 1.0,
 ];
 
-// Shader sources
 static VS_SRC: &'static str =
-   "#version 330\n\
-    layout(location = 0) in vec4 position;\n\
-    void main() {\n\
-       gl_Position = position;\n\
-    }";
+"#version 330\n\
+ layout(location = 0) in vec4 position;\n\
+ void main() {\n\
+   gl_Position = position;\n\
+ }";
 
 static FS_SRC: &'static str =
-   "#version 330\n\
-    out vec4 out_color;\n\
-    void main() {\n\
-       out_color = vec4(0.3, 0.1, 1.8, 1.0);\n\
-    }";
+"#version 330\n\
+ out vec4 out_color;\n\
+ void main() {\n\
+   float lerpValue = gl_FragCoord.y / 500.0f;\n\
+   \n\
+   out_color = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.2f, 0.2f, 0.2f, 1.0f), lerpValue);\n\
+ }";
 
-#[start]
-fn start(argc: int, argv: **u8) -> int {
-    native::start(argc, argv, main)
-}
+// */
 
-fn compile_shader(src: &str, ty: GLenum) -> GLuint {
-    let shader = gl::CreateShader(ty);
-    unsafe {
-        // Attempt to compile the shader
-        src.with_c_str(|ptr| gl::ShaderSource(shader, 1, &ptr, ptr::null()));
-        gl::CompileShader(shader);
+//* // vertex colors tut
+static vertex_data: [GLfloat, ..24] = [
+	 0.0,    0.5, 0.0, 1.0,
+	 0.5, -0.366, 0.0, 1.0,
+	-0.5, -0.366, 0.0, 1.0,
+	 1.0,    0.0, 0.0, 1.0,
+	 0.0,    1.0, 0.0, 1.0,
+	 0.0,    0.0, 1.0, 1.0,
+];
 
-        // Get the compile status
-        let mut status = gl::FALSE as GLint;
-        gl::GetShaderiv(shader, gl::COMPILE_STATUS, &mut status);
+static color_data: [GLfloat, ..12] = [
+	 1.0,    0.0, 0.0, 1.0,
+	 0.0,    1.0, 0.0, 1.0,
+	 0.0,    0.0, 1.0, 1.0,
+];
 
-        // Fail on error
-        if status != (gl::TRUE as GLint) {
-            let mut len = 0;
-            gl::GetShaderiv(shader, gl::INFO_LOG_LENGTH, &mut len);
-            let mut buf = Vec::from_elem(len as uint - 1, 0u8);     // subtract 1 to skip the trailing null character
-            gl::GetShaderInfoLog(shader, len, ptr::mut_null(), buf.as_mut_ptr() as *mut GLchar);
-            fail!("{}", str::from_utf8(buf.as_slice()).expect("ShaderInfoLog not valid utf8"));
-        }
-    }
-    shader
-}
+static VS_SRC: &'static str =
+"#version 330\n\
+ layout (location = 0) in vec4 position;\n\
+ layout (location = 1) in vec4 color;\n\
+ \n\
+ smooth out vec4 theColor;\n\
+ \n\
+ void main() {\n\
+   gl_Position = position;\n\
+   theColor = color;\n\
+ }";
 
-fn link_program(vs: GLuint, fs: GLuint) -> GLuint {
-    let program = gl::CreateProgram();
-    gl::AttachShader(program, vs);
-    gl::AttachShader(program, fs);
-    gl::LinkProgram(program);
-    unsafe {
-        // Get the link status
-        let mut status = gl::FALSE as GLint;
-        gl::GetProgramiv(program, gl::LINK_STATUS, &mut status);
+static FS_SRC: &'static str =
+"#version 330\n\
+ smooth in vec4 theColor;\n\
+ out vec4 out_color;\n\
+ \n\
+ void main() {\n\
+   out_color = theColor * (gl_FragCoord.y / 100.0f);\n\
+ }";
 
-        // Fail on error
-        if status != (gl::TRUE as GLint) {
-            let mut len: GLint = 0;
-            gl::GetProgramiv(program, gl::INFO_LOG_LENGTH, &mut len);
-            let mut buf = Vec::from_elem(len as uint - 1, 0u8);     // subtract 1 to skip the trailing null character
-            gl::GetProgramInfoLog(program, len, ptr::mut_null(), buf.as_mut_ptr() as *mut GLchar);
-            fail!("{}", str::from_utf8(buf.as_slice()).expect("ProgramInfoLog not valid utf8"));
-        }
-    }
-    program
-}
-
-fn handle_window_event(window: &glfw::Window, event: glfw::WindowEvent) {
-    match event {
-        glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => {
-            window.set_should_close(true)
-        }
-        glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => {
-            window.set_should_close(true)
-        }
-        _ => {}
-    }
-}
-
-// fn reshape(w: int, h: int) {
-// 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
-// }
+// */
 
 fn init_program() -> GLuint {
-    let vs = compile_shader(VS_SRC, gl::VERTEX_SHADER);
-    let fs = compile_shader(FS_SRC, gl::FRAGMENT_SHADER);
-    let p = link_program(vs, fs);
+    let vs = shaders::load_shader(VS_SRC, gl::VERTEX_SHADER);
+    let fs = shaders::load_shader(FS_SRC, gl::FRAGMENT_SHADER);
+    let p = shaders::create_program(vs, fs);
 
 	gl::DeleteShader(vs);
 	gl::DeleteShader(fs);
@@ -129,7 +106,17 @@ fn init_vertex_buffer(vbo: &mut GLuint) {
 		gl::GenBuffers(1, vbo);
 
 		gl::BindBuffer(gl::ARRAY_BUFFER, *vbo);
-		gl::BufferData(gl::ARRAY_BUFFER, (VERTEX_DATA.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&VERTEX_DATA[0]), gl::STATIC_DRAW);
+		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STATIC_DRAW);
+		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+	}
+}
+
+fn init_color_buffer(cbo: &mut GLuint) {
+	unsafe {
+		gl::GenBuffers(1, cbo);
+
+		gl::BindBuffer(gl::ARRAY_BUFFER, *cbo);
+		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&color_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
 }
@@ -162,15 +149,15 @@ fn main() {
 
     let mut vao = 0;
     let mut vbo = 0;
+	let mut cbo = 0;
 	init_vertex_buffer(&mut vbo);
+	init_color_buffer(&mut cbo);
 	println!("init vertex buffer");
 
 	unsafe{
 		gl::GenVertexArrays(1, &mut vao);
 	}
 	gl::BindVertexArray(vao);
-
-	gl::Viewport(0, 0, 400, 300);
 
 	/*
     unsafe {
@@ -182,8 +169,8 @@ fn main() {
         gl::GenBuffers(1, &mut vbo);
         gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
         gl::BufferData(gl::ARRAY_BUFFER,
-                       (VERTEX_DATA.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                       cast::transmute(&VERTEX_DATA[0]),
+                       (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
+                       cast::transmute(&vertex_data[0]),
                        gl::STATIC_DRAW);
 
         // Use shader program
@@ -206,7 +193,7 @@ fn main() {
         }
 
         // Clear the screen to black
-        gl::ClearColor(0.0, 1.0, 0.0, 0.0);
+        gl::ClearColor(0.0, 0.0, 0.0, 0.0);
         gl::Clear(gl::COLOR_BUFFER_BIT);
 
 		gl::UseProgram(program);
@@ -217,9 +204,16 @@ fn main() {
 			gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
 		}
 
+		gl::BindBuffer(gl::ARRAY_BUFFER, cbo);
+		gl::EnableVertexAttribArray(1);
+		unsafe {
+			gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
+		}
+
 		gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
 		gl::DisableVertexAttribArray(0);
+		gl::DisableVertexAttribArray(1);
 		gl::UseProgram(0);
 
         // Swap buffers
@@ -233,4 +227,26 @@ fn main() {
         gl::DeleteVertexArrays(1, &vao);
     }
 }
+
+#[start]
+fn start(argc: int, argv: **u8) -> int {
+    native::start(argc, argv, main)
+}
+
+fn handle_window_event(window: &glfw::Window, event: glfw::WindowEvent) {
+    match event {
+        glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => {
+            window.set_should_close(true)
+        }
+        glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => {
+            window.set_should_close(true)
+        }
+        _ => {}
+    }
+}
+
+// fn reshape(w: int, h: int) {
+// 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
+// }
+
 
