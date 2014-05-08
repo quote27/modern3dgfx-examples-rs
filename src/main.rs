@@ -27,25 +27,25 @@ use std::ptr;
 use std::str;
 
 // Vertex data
-static VERTEX_DATA: [GLfloat, ..6] = [
-     0.0,  0.5,
-     0.5, -0.5,
-    -0.5, -0.5
+static VERTEX_DATA: [GLfloat, ..12] = [
+    0.75,  1.75, 0.0, 1.0,
+    0.75, -0.75, 0.0, 1.0,
+   -0.75, -0.75, 0.0, 1.0,
 ];
 
 // Shader sources
 static VS_SRC: &'static str =
-   "#version 150\n\
-    in vec2 position;\n\
+   "#version 330\n\
+    layout(location = 0) in vec4 position;\n\
     void main() {\n\
-       gl_Position = vec4(position, 0.0, 1.0);\n\
+       gl_Position = position;\n\
     }";
 
 static FS_SRC: &'static str =
-   "#version 150\n\
+   "#version 330\n\
     out vec4 out_color;\n\
     void main() {\n\
-       out_color = vec4(1.0, 1.0, 1.0, 1.0);\n\
+       out_color = vec4(0.3, 0.1, 1.8, 1.0);\n\
     }";
 
 #[start]
@@ -110,8 +110,32 @@ fn handle_window_event(window: &glfw::Window, event: glfw::WindowEvent) {
     }
 }
 
+// fn reshape(w: int, h: int) {
+// 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
+// }
+
+fn init_program() -> GLuint {
+    let vs = compile_shader(VS_SRC, gl::VERTEX_SHADER);
+    let fs = compile_shader(FS_SRC, gl::FRAGMENT_SHADER);
+    let p = link_program(vs, fs);
+
+	gl::DeleteShader(vs);
+	gl::DeleteShader(fs);
+	p
+}
+
+fn init_vertex_buffer(vbo: &mut GLuint) {
+	unsafe {
+		gl::GenBuffers(1, vbo);
+
+		gl::BindBuffer(gl::ARRAY_BUFFER, *vbo);
+		gl::BufferData(gl::ARRAY_BUFFER, (VERTEX_DATA.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&VERTEX_DATA[0]), gl::STATIC_DRAW);
+		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+	}
+}
 
 fn main() {
+	// init glfw
     let glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
     // Choose a GL profile that is compatible with OS X 10.7+
@@ -130,15 +154,25 @@ fn main() {
 
     // Load the OpenGL function pointers
     gl::load_with(|s| glfw.get_proc_address(s));
+	println!("loaded opengl functions");
 
-    // Create GLSL shaders
-    let vs = compile_shader(VS_SRC, gl::VERTEX_SHADER);
-    let fs = compile_shader(FS_SRC, gl::FRAGMENT_SHADER);
-    let program = link_program(vs, fs);
+    // Create GLSL shader program
+	let program = init_program();
+	println!("compiled shaders")
 
     let mut vao = 0;
     let mut vbo = 0;
+	init_vertex_buffer(&mut vbo);
+	println!("init vertex buffer");
 
+	unsafe{
+		gl::GenVertexArrays(1, &mut vao);
+	}
+	gl::BindVertexArray(vao);
+
+	gl::Viewport(0, 0, 400, 300);
+
+	/*
     unsafe {
         // Create Vertex Array Object
         gl::GenVertexArrays(1, &mut vao);
@@ -162,20 +196,31 @@ fn main() {
         gl::VertexAttribPointer(pos_attr as GLuint, 2, gl::FLOAT,
                                 gl::FALSE as GLboolean, 0, ptr::null());
     }
+	*/
+
 
     while !window.should_close() {
-        // Poll events
         glfw.poll_events();
         for (_, event) in glfw::flush_messages(&events) {
             handle_window_event(&window, event);
         }
 
         // Clear the screen to black
-        gl::ClearColor(0.3, 0.3, 0.3, 1.0);
+        gl::ClearColor(0.0, 1.0, 0.0, 0.0);
         gl::Clear(gl::COLOR_BUFFER_BIT);
 
-        // Draw a triangle from the 3 vertices
-        gl::DrawArrays(gl::TRIANGLES, 0, 3);
+		gl::UseProgram(program);
+
+		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+		gl::EnableVertexAttribArray(0);
+		unsafe{
+			gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
+		}
+
+		gl::DrawArrays(gl::TRIANGLES, 0, 3);
+
+		gl::DisableVertexAttribArray(0);
+		gl::UseProgram(0);
 
         // Swap buffers
         window.swap_buffers();
@@ -183,8 +228,6 @@ fn main() {
 
     // Cleanup
     gl::DeleteProgram(program);
-    gl::DeleteShader(fs);
-    gl::DeleteShader(vs);
     unsafe {
         gl::DeleteBuffers(1, &vbo);
         gl::DeleteVertexArrays(1, &vao);
