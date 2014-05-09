@@ -53,13 +53,10 @@ static FS_SRC: &'static str =
 // */
 
 //* // vertex colors tut
-static vertex_data: [GLfloat, ..24] = [
+static vertex_data: [GLfloat, ..12] = [
 	 0.0,    0.5, 0.0, 1.0,
 	 0.5, -0.366, 0.0, 1.0,
 	-0.5, -0.366, 0.0, 1.0,
-	 1.0,    0.0, 0.0, 1.0,
-	 0.0,    1.0, 0.0, 1.0,
-	 0.0,    0.0, 1.0, 1.0,
 ];
 
 static color_data: [GLfloat, ..12] = [
@@ -86,7 +83,8 @@ static FS_SRC: &'static str =
  out vec4 out_color;\n\
  \n\
  void main() {\n\
-   out_color = theColor * (gl_FragCoord.y / 100.0f);\n\
+   //out_color = theColor * (gl_FragCoord.y / 500.0f);\n\
+   out_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n\
  }";
 
 // */
@@ -106,7 +104,7 @@ fn init_vertex_buffer(vbo: &mut GLuint) {
 		gl::GenBuffers(1, vbo);
 
 		gl::BindBuffer(gl::ARRAY_BUFFER, *vbo);
-		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STATIC_DRAW);
+		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STREAM_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
 }
@@ -119,6 +117,39 @@ fn init_color_buffer(cbo: &mut GLuint) {
 		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&color_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
+}
+
+fn compute_offsets(felap_time: f32) -> (f32, f32) {
+	let floop_duration: f32 = 5.0;
+	let fscale: f32 = 3.14159 * 2.0 / floop_duration;
+
+	//let (_, fcurr_time_in_loop) = num::div_rem(felap_time, floop_duration);
+	//let fcurr_time_in_loop = felap_time % floop_duration;
+	//wiki: modulo definition: a % n = a - (n * floor(a/n))
+	let fcurr_time_in_loop = felap_time - (floop_duration * (felap_time / floop_duration).floor());
+
+	((fcurr_time_in_loop * fscale).cos() * 0.5, (fcurr_time_in_loop * fscale).sin() * 0.5)
+}
+
+fn adjust_vert_data(vbo: GLuint, xoff: f32, yoff: f32) {
+	//let mut adjvert_data: [GLfloat, ..12] = [0.0, ..12];
+	let mut adjvert_data_vec = Vec::from_slice(vertex_data);
+	let mut adjvert_data = adjvert_data_vec.as_mut_slice();
+
+
+	let mut i = 0;
+	while i < vertex_data.len() {
+		adjvert_data[i] += xoff;
+		adjvert_data[i+1] += yoff;
+		i+=4;
+	}
+
+	unsafe {
+	gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+	gl::BufferSubData(gl::ARRAY_BUFFER, 0, (adjvert_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&adjvert_data[0]));
+	gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+	}
+
 }
 
 fn main() {
@@ -191,6 +222,9 @@ fn main() {
         for (_, event) in glfw::flush_messages(&events) {
             handle_window_event(&window, event);
         }
+
+		let (xoff, yoff) = compute_offsets(glfw.get_time() as f32);
+		adjust_vert_data(vbo, xoff, yoff);
 
         // Clear the screen to black
         gl::ClearColor(0.0, 0.0, 0.0, 0.0);
