@@ -54,9 +54,9 @@ static FS_SRC: &'static str =
 
 //* // vertex colors tut
 static vertex_data: [GLfloat, ..12] = [
-	 0.0,    0.5, 0.0, 1.0,
-	 0.5, -0.366, 0.0, 1.0,
-	-0.5, -0.366, 0.0, 1.0,
+	 0.25,  0.25, 0.0, 1.0,
+	 0.25, -0.25, 0.0, 1.0,
+	-0.25, -0.25, 0.0, 1.0,
 ];
 
 static color_data: [GLfloat, ..12] = [
