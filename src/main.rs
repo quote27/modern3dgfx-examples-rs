@@ -68,13 +68,12 @@ static color_data: [GLfloat, ..12] = [
 static VS_SRC: &'static str =
 "#version 330\n\
  layout (location = 0) in vec4 position;\n\
- layout (location = 1) in vec4 color;\n\
- \n\
- smooth out vec4 theColor;\n\
+ uniform vec2 offset;
  \n\
  void main() {\n\
-   gl_Position = position;\n\
-   theColor = color;\n\
+   vec4 offvec = vec4(offset.x, offset.y, 0.0, 0.0);\n\
+   //vec4 offvec = vec4(offset, 0.0, 0.0);\n\
+   gl_Position = position + offvec;\n\
  }";
 
 static FS_SRC: &'static str =
@@ -176,7 +175,12 @@ fn main() {
 
     // Create GLSL shader program
 	let program = init_program();
-	println!("compiled shaders")
+	println!("compiled shaders");
+
+	let mut offset_loc;
+	unsafe {
+		offset_loc = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
+	}
 
     let mut vao = 0;
     let mut vbo = 0;
@@ -224,7 +228,8 @@ fn main() {
         }
 
 		let (xoff, yoff) = compute_offsets(glfw.get_time() as f32);
-		adjust_vert_data(vbo, xoff, yoff);
+		// adjust_vert_data(vbo, xoff, yoff);
+
 
         // Clear the screen to black
         gl::ClearColor(0.0, 0.0, 0.0, 0.0);
@@ -232,17 +237,19 @@ fn main() {
 
 		gl::UseProgram(program);
 
+		gl::Uniform2f(offset_loc, xoff, yoff);
+
 		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 		gl::EnableVertexAttribArray(0);
 		unsafe{
 			gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
 		}
 
-		gl::BindBuffer(gl::ARRAY_BUFFER, cbo);
-		gl::EnableVertexAttribArray(1);
-		unsafe {
-			gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
-		}
+//		gl::BindBuffer(gl::ARRAY_BUFFER, cbo);
+//		gl::EnableVertexAttribArray(1);
+//		unsafe {
+//			gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
+//		}
 
 		gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
