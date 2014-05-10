@@ -93,8 +93,9 @@ uniform float time;\n\
 const vec4 color1 = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n\
 const vec4 color2 = vec4(0.0f, 1.0f, 0.0f, 1.0f);\n\
 void main() {\n\
-  float curr_time = mod(time, loop_duration);\n\
-  float curr_lerp = curr_time / loop_duration;\n\
+  float tscale = 3.14159f / loop_duration;
+  //float curr_time = mod(time, loop_duration);\n\
+  float curr_lerp = abs(sin(time * tscale));\n\
   out_color = mix(color1, color2, curr_lerp);\n\
 }";
 
@@ -256,6 +257,7 @@ fn main() {
 
 		gl::UseProgram(program);
 
+		gl::Uniform1f(loop_duration_loc, 5.0);
 		println!("{}", glfw.get_time());
 		gl::Uniform1f(time_loc, glfw.get_time() as f32);
 
@@ -265,6 +267,9 @@ fn main() {
 			gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
 		}
 
+		gl::DrawArrays(gl::TRIANGLES, 0, 3);
+
+		gl::Uniform1f(loop_duration_loc, 2.5);
 		gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
 		gl::DisableVertexAttribArray(0);
