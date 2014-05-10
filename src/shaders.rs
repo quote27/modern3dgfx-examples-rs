@@ -7,7 +7,6 @@ use std::str;
 
 
 pub fn load_file(file_src: &str) -> ~str {
-	use std::str::from_utf8_owned;
 	use std::io::File;
 
 	let path = Path::new(file_src);
@@ -20,12 +19,12 @@ pub fn load_file(file_src: &str) -> ~str {
 	dat
 }
 
-pub fn load_shader_file(file_src: &str, ty: GLenum) -> GLuint {
-	load_shader(load_file(file_src), ty)
+pub fn load_shader_file(ty: GLenum, file_src: &str) -> GLuint {
+	load_shader(ty, load_file(file_src))
 }
 
 //TODO: write file load logic using http://static.rust-lang.org/doc/master/std/io/fs/struct.File.html
-pub fn load_shader(src: &str, ty: GLenum) -> GLuint {
+pub fn load_shader(ty: GLenum, src: &str) -> GLuint {
 	let shader = gl::CreateShader(ty);
 	unsafe {
 		// Attempt to compile the shader
@@ -49,24 +48,24 @@ pub fn load_shader(src: &str, ty: GLenum) -> GLuint {
 }
 
 pub fn create_program(shader_list: &Vec<GLuint>) -> GLuint {
-	let program = gl::CreateProgram();
+	let prog = gl::CreateProgram();
 	for s in shader_list.iter() {
-		gl::AttachShader(program, *s);
+		gl::AttachShader(prog, *s);
 	}
-	gl::LinkProgram(program);
+	gl::LinkProgram(prog);
 	unsafe {
 		// Get the link status
 		let mut status = gl::FALSE as GLint;
-		gl::GetProgramiv(program, gl::LINK_STATUS, &mut status);
+		gl::GetProgramiv(prog, gl::LINK_STATUS, &mut status);
 
 		// Fail on error
 		if status != (gl::TRUE as GLint) {
 			let mut len: GLint = 0;
-			gl::GetProgramiv(program, gl::INFO_LOG_LENGTH, &mut len);
+			gl::GetProgramiv(prog, gl::INFO_LOG_LENGTH, &mut len);
 			let mut buf = Vec::from_elem(len as uint - 1, 0u8);     // subtract 1 to skip the trailing null character
-			gl::GetProgramInfoLog(program, len, ptr::mut_null(), buf.as_mut_ptr() as *mut GLchar);
+			gl::GetProgramInfoLog(prog, len, ptr::mut_null(), buf.as_mut_ptr() as *mut GLchar);
 			fail!("{}", str::from_utf8(buf.as_slice()).expect("ProgramInfoLog not valid utf8"));
 		}
 	}
-	program
+	prog
 }
