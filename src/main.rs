@@ -29,58 +29,58 @@ mod shaders;
 
 
 static vertex_data: [GLfloat, ..288] = [
-	 0.25,  0.25, 0.75, 1.0, // positions
-	 0.25, -0.25, 0.75, 1.0,
-	-0.25,  0.25, 0.75, 1.0,
+	 0.25,  0.25, -1.25, 1.0,
+	 0.25, -0.25, -1.25, 1.0,
+	-0.25,  0.25, -1.25, 1.0,
 
-	 0.25, -0.25, 0.75, 1.0,
-	-0.25, -0.25, 0.75, 1.0,
-	-0.25,  0.25, 0.75, 1.0,
+	 0.25, -0.25, -1.25, 1.0,
+	-0.25, -0.25, -1.25, 1.0,
+	-0.25,  0.25, -1.25, 1.0,
 
-	 0.25,  0.25, -0.75, 1.0,
-	-0.25,  0.25, -0.75, 1.0,
-	 0.25, -0.25, -0.75, 1.0,
+	 0.25,  0.25, -2.75, 1.0,
+	-0.25,  0.25, -2.75, 1.0,
+	 0.25, -0.25, -2.75, 1.0,
 
-	 0.25, -0.25, -0.75, 1.0,
-	-0.25,  0.25, -0.75, 1.0,
-	-0.25, -0.25, -0.75, 1.0,
+	 0.25, -0.25, -2.75, 1.0,
+	-0.25,  0.25, -2.75, 1.0,
+	-0.25, -0.25, -2.75, 1.0,
 
-	-0.25,  0.25,  0.75, 1.0,
-	-0.25, -0.25,  0.75, 1.0,
-	-0.25, -0.25, -0.75, 1.0,
+	-0.25,  0.25, -1.25, 1.0,
+	-0.25, -0.25, -1.25, 1.0,
+	-0.25, -0.25, -2.75, 1.0,
 
-	-0.25,  0.25,  0.75, 1.0,
-	-0.25, -0.25, -0.75, 1.0,
-	-0.25,  0.25, -0.75, 1.0,
+	-0.25,  0.25, -1.25, 1.0,
+	-0.25, -0.25, -2.75, 1.0,
+	-0.25,  0.25, -2.75, 1.0,
 
-	 0.25,  0.25,  0.75, 1.0,
-	 0.25, -0.25, -0.75, 1.0,
-	 0.25, -0.25,  0.75, 1.0,
+	 0.25,  0.25, -1.25, 1.0,
+	 0.25, -0.25, -2.75, 1.0,
+	 0.25, -0.25, -1.25, 1.0,
 
-	 0.25,  0.25,  0.75, 1.0,
-	 0.25,  0.25, -0.75, 1.0,
-	 0.25, -0.25, -0.75, 1.0,
+	 0.25,  0.25, -1.25, 1.0,
+	 0.25,  0.25, -2.75, 1.0,
+	 0.25, -0.25, -2.75, 1.0,
 
-	 0.25,  0.25, -0.75, 1.0,
-	 0.25,  0.25,  0.75, 1.0,
-	-0.25,  0.25,  0.75, 1.0,
+	 0.25,  0.25, -2.75, 1.0,
+	 0.25,  0.25, -1.25, 1.0,
+	-0.25,  0.25, -1.25, 1.0,
 
-	 0.25,  0.25, -0.75, 1.0,
-	-0.25,  0.25,  0.75, 1.0,
-	-0.25,  0.25, -0.75, 1.0,
+	 0.25,  0.25, -2.75, 1.0,
+	-0.25,  0.25, -1.25, 1.0,
+	-0.25,  0.25, -2.75, 1.0,
 
-	 0.25, -0.25, -0.75, 1.0,
-	-0.25, -0.25,  0.75, 1.0,
-	 0.25, -0.25,  0.75, 1.0,
+	 0.25, -0.25, -2.75, 1.0,
+	-0.25, -0.25, -1.25, 1.0,
+	 0.25, -0.25, -1.25, 1.0,
 
-	 0.25, -0.25, -0.75, 1.0,
-	-0.25, -0.25, -0.75, 1.0,
-	-0.25, -0.25,  0.75, 1.0,
-
-
+	 0.25, -0.25, -2.75, 1.0,
+	-0.25, -0.25, -2.75, 1.0,
+	-0.25, -0.25, -1.25, 1.0,
 
 
-	0.0, 0.0, 1.0, 1.0, // colors
+
+
+	0.0, 0.0, 1.0, 1.0,
 	0.0, 0.0, 1.0, 1.0,
 	0.0, 0.0, 1.0, 1.0,
 
@@ -133,7 +133,7 @@ static vertex_data: [GLfloat, ..288] = [
 fn init_program() -> GLuint {
 	println!("== init program ==");
 	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/OrthoWithOffset.vert"));
+	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/ManualPerspective.vert"));
     shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/StandardColors.frag"));
     let mut program = shaders::create_program(&shader_list);
 
@@ -171,11 +171,20 @@ fn init() -> (GLuint, GLuint, GLuint, GLint) {
 	gl::FrontFace(gl::CW);
 
 	let mut offset_unif = 0;
+	let mut frustum_scale_unif = 0;
+	let mut znear_unif = 0;
+	let mut zfar_unif = 0;
 	gl::UseProgram(program);
 	unsafe {
 		offset_unif = gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr));
+		frustum_scale_unif = gl::GetUniformLocation(program, "frustumScale".with_c_str(|ptr| ptr));
+		znear_unif = gl::GetUniformLocation(program, "zNear".with_c_str(|ptr| ptr));
+		zfar_unif = gl::GetUniformLocation(program, "zFar".with_c_str(|ptr| ptr));
 		//offset_unif = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
 	}
+	gl::Uniform1f(frustum_scale_unif, 1.0);
+	gl::Uniform1f(znear_unif, 1.0);
+	gl::Uniform1f(zfar_unif, 3.0);
 	gl::UseProgram(0);
 
 	(program, vbo, vao, offset_unif)
@@ -186,7 +195,7 @@ fn display(program: GLuint, vbo: GLuint, offset_unif: GLint) {
 	gl::Clear(gl::COLOR_BUFFER_BIT);
 
 	gl::UseProgram(program);
-	gl::Uniform2f(offset_unif, 0.5, 0.25);
+	gl::Uniform2f(offset_unif, 0.5, 0.5);
 
 	let color_data = vertex_data.len() * mem::size_of::<GLfloat>() / 2;
 	gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
@@ -211,13 +220,15 @@ fn main() {
     glfw.window_hint(glfw::ContextVersion(3, 2));
     glfw.window_hint(glfw::OpenglForwardCompat(true));
     glfw.window_hint(glfw::OpenglProfile(glfw::OpenGlCoreProfile));
+	glfw.window_hint(glfw::Resizable(false));
 
-    let (window, events) = glfw.create_window(800, 600, "OpenGL", glfw::Windowed)
+    let (window, events) = glfw.create_window(600, 600, "OpenGL", glfw::Windowed)
         .expect("Failed to create GLFW window.");
 
     window.make_current(); //make context current before calling gl::load_with
     window.set_key_polling(true); //enable internal polling function
 
+	window.set_size(600, 600);
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
 	let (mut program, mut vbo, mut vao, mut offset_unif) = init();
