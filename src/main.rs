@@ -67,18 +67,26 @@ static color_data: [GLfloat, ..12] = [
 
 static VS_SRC: &'static str =
 "#version 330\n\
- layout (location = 0) in vec4 position;\n\
- uniform vec2 offset;
- \n\
- void main() {\n\
-   vec4 offvec = vec4(offset.x, offset.y, 0.0, 0.0);\n\
-   //vec4 offvec = vec4(offset, 0.0, 0.0);\n\
-   gl_Position = position + offvec;\n\
- }";
+layout (location = 0) in vec4 position;\n\
+uniform float loop_duration;\n\
+uniform float time;
+\n\
+void main() {\n\
+	float tscale = 3.14159f * 2.0f / loop_duration;
+	float curr_time = time; //mod(time, loop_duration);
+	vec4 offvec = vec4(
+		cos(curr_time * tscale) * 0.5f,
+		sin(curr_time * tscale) * 0.5f,
+		0.0f, 0.0f);
+   
+	//vec4 offvec = vec4(offset.x, offset.y, 0.0, 0.0);\n\
+	//vec4 offvec = vec4(offset, 0.0, 0.0);\n\
+	gl_Position = position + offvec;\n\
+}";
 
 static FS_SRC: &'static str =
 "#version 330\n\
- smooth in vec4 theColor;\n\
+ //smooth in vec4 theColor;\n\
  out vec4 out_color;\n\
  \n\
  void main() {\n\
@@ -103,7 +111,7 @@ fn init_vertex_buffer(vbo: &mut GLuint) {
 		gl::GenBuffers(1, vbo);
 
 		gl::BindBuffer(gl::ARRAY_BUFFER, *vbo);
-		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STREAM_DRAW);
+		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
 }
@@ -177,10 +185,17 @@ fn main() {
 	let program = init_program();
 	println!("compiled shaders");
 
-	let mut offset_loc;
+	let mut loop_duration_loc;
+	let mut time_loc;
 	unsafe {
-		offset_loc = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
+		loop_duration_loc = "loop_duration".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
+		time_loc = "time".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
 	}
+
+	gl::UseProgram(program);
+	gl::Uniform1f(loop_duration_loc, 5.0);
+	gl::UseProgram(0);
+
 
     let mut vao = 0;
     let mut vbo = 0;
@@ -227,7 +242,7 @@ fn main() {
             handle_window_event(&window, event);
         }
 
-		let (xoff, yoff) = compute_offsets(glfw.get_time() as f32);
+		//let (xoff, yoff) = compute_offsets(glfw.get_time() as f32);
 		// adjust_vert_data(vbo, xoff, yoff);
 
 
@@ -237,19 +252,14 @@ fn main() {
 
 		gl::UseProgram(program);
 
-		gl::Uniform2f(offset_loc, xoff, yoff);
+		println!("{}", glfw.get_time());
+		gl::Uniform1f(time_loc, glfw.get_time() as f32);
 
 		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 		gl::EnableVertexAttribArray(0);
 		unsafe{
 			gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
 		}
-
-//		gl::BindBuffer(gl::ARRAY_BUFFER, cbo);
-//		gl::EnableVertexAttribArray(1);
-//		unsafe {
-//			gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
-//		}
 
 		gl::DrawArrays(gl::TRIANGLES, 0, 3);
 
