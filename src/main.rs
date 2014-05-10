@@ -73,7 +73,7 @@ uniform float time;
 \n\
 void main() {\n\
 	float tscale = 3.14159f * 2.0f / loop_duration;
-	float curr_time = time; //mod(time, loop_duration);
+	float curr_time = mod(time, loop_duration);
 	vec4 offvec = vec4(
 		cos(curr_time * tscale) * 0.5f,
 		sin(curr_time * tscale) * 0.5f,
@@ -86,13 +86,17 @@ void main() {\n\
 
 static FS_SRC: &'static str =
 "#version 330\n\
- //smooth in vec4 theColor;\n\
- out vec4 out_color;\n\
- \n\
- void main() {\n\
-   //out_color = theColor * (gl_FragCoord.y / 500.0f);\n\
-   out_color = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n\
- }";
+out vec4 out_color;\n\
+uniform float loop_duration;\n\
+uniform float time;\n\
+\n\
+const vec4 color1 = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n\
+const vec4 color2 = vec4(0.0f, 1.0f, 0.0f, 1.0f);\n\
+void main() {\n\
+  float curr_time = mod(time, loop_duration);\n\
+  float curr_lerp = curr_time / loop_duration;\n\
+  out_color = mix(color1, color2, curr_lerp);\n\
+}";
 
 // */
 
