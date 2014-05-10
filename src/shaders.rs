@@ -5,6 +5,25 @@ use gl::types::*;
 use std::ptr;
 use std::str;
 
+
+pub fn load_file(file_src: &str) -> ~str {
+	use std::str::from_utf8_owned;
+	use std::io::File;
+
+	let path = Path::new(file_src);
+	let mut f = File::open(&path);
+
+	let dat = f.read_to_str().ok().expect(format!("unable to open {} file", file_src));
+
+	println!("reading {0} file:\n{1}\n---", file_src, dat);
+
+	dat
+}
+
+pub fn load_shader_file(file_src: &str, ty: GLenum) -> GLuint {
+	load_shader(load_file(file_src), ty)
+}
+
 //TODO: write file load logic using http://static.rust-lang.org/doc/master/std/io/fs/struct.File.html
 pub fn load_shader(src: &str, ty: GLenum) -> GLuint {
 	let shader = gl::CreateShader(ty);
@@ -29,10 +48,11 @@ pub fn load_shader(src: &str, ty: GLenum) -> GLuint {
 	shader
 }
 
-pub fn create_program(vs: GLuint, fs: GLuint) -> GLuint {
+pub fn create_program(shader_list: &Vec<GLuint>) -> GLuint {
 	let program = gl::CreateProgram();
-	gl::AttachShader(program, vs);
-	gl::AttachShader(program, fs);
+	for s in shader_list.iter() {
+		gl::AttachShader(program, *s);
+	}
 	gl::LinkProgram(program);
 	unsafe {
 		// Get the link status

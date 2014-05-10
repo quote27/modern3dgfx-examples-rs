@@ -27,31 +27,6 @@ use std::ptr;
 
 mod shaders;
 
-/* // frag color tut
-static vertex_data: [GLfloat, ..12] = [
-    0.75,  0.75, 0.0, 1.0,
-    0.75, -0.75, 0.0, 1.0,
-   -0.75, -0.75, 0.0, 1.0,
-];
-
-static VS_SRC: &'static str =
-"#version 330\n\
- layout(location = 0) in vec4 position;\n\
- void main() {\n\
-   gl_Position = position;\n\
- }";
-
-static FS_SRC: &'static str =
-"#version 330\n\
- out vec4 out_color;\n\
- void main() {\n\
-   float lerpValue = gl_FragCoord.y / 500.0f;\n\
-   \n\
-   out_color = mix(vec4(1.0f, 1.0f, 1.0f, 1.0f), vec4(0.2f, 0.2f, 0.2f, 1.0f), lerpValue);\n\
- }";
-
-// */
-
 //* // vertex colors tut
 static vertex_data: [GLfloat, ..12] = [
 	 0.25,  0.25, 0.0, 1.0,
@@ -65,50 +40,19 @@ static color_data: [GLfloat, ..12] = [
 	 0.0,    0.0, 1.0, 1.0,
 ];
 
-static VS_SRC: &'static str =
-"#version 330\n\
-layout (location = 0) in vec4 position;\n\
-uniform float loop_duration;\n\
-uniform float time;
-\n\
-void main() {\n\
-	float tscale = 3.14159f * 2.0f / loop_duration;
-	float curr_time = mod(time, loop_duration);
-	vec4 offvec = vec4(
-		cos(curr_time * tscale) * 0.5f,
-		sin(curr_time * tscale) * 0.5f,
-		0.0f, 0.0f);
-   
-	//vec4 offvec = vec4(offset.x, offset.y, 0.0, 0.0);\n\
-	//vec4 offvec = vec4(offset, 0.0, 0.0);\n\
-	gl_Position = position + offvec;\n\
-}";
-
-static FS_SRC: &'static str =
-"#version 330\n\
-out vec4 out_color;\n\
-uniform float loop_duration;\n\
-uniform float time;\n\
-\n\
-const vec4 color1 = vec4(1.0f, 1.0f, 1.0f, 1.0f);\n\
-const vec4 color2 = vec4(0.0f, 1.0f, 0.0f, 1.0f);\n\
-void main() {\n\
-  float tscale = 3.14159f / loop_duration;
-  //float curr_time = mod(time, loop_duration);\n\
-  float curr_lerp = abs(sin(time * tscale));\n\
-  out_color = mix(color1, color2, curr_lerp);\n\
-}";
-
 // */
 
 fn init_program() -> GLuint {
-    let vs = shaders::load_shader(VS_SRC, gl::VERTEX_SHADER);
-    let fs = shaders::load_shader(FS_SRC, gl::FRAGMENT_SHADER);
-    let p = shaders::create_program(vs, fs);
+	println!("== init program ==");
+	let mut shader_list = Vec::new();
+	shader_list.push(shaders::load_shader_file("movetri.vert", gl::VERTEX_SHADER));
+    shader_list.push(shaders::load_shader_file("movetri.frag", gl::FRAGMENT_SHADER));
+    let program = shaders::create_program(&shader_list);
 
-	gl::DeleteShader(vs);
-	gl::DeleteShader(fs);
-	p
+	for s in shader_list.iter() {
+		gl::DeleteShader(*s);
+	}
+	program
 }
 
 fn init_vertex_buffer(vbo: &mut GLuint) {
@@ -258,7 +202,6 @@ fn main() {
 		gl::UseProgram(program);
 
 		gl::Uniform1f(loop_duration_loc, 5.0);
-		println!("{}", glfw.get_time());
 		gl::Uniform1f(time_loc, glfw.get_time() as f32);
 
 		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
