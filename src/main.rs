@@ -27,27 +27,115 @@ use std::ptr;
 
 mod shaders;
 
-//* // vertex colors tut
-static vertex_data: [GLfloat, ..12] = [
-	 0.25,  0.25, 0.0, 1.0,
-	 0.25, -0.25, 0.0, 1.0,
-	-0.25, -0.25, 0.0, 1.0,
-];
 
-static color_data: [GLfloat, ..12] = [
-	 1.0,    0.0, 0.0, 1.0,
-	 0.0,    1.0, 0.0, 1.0,
-	 0.0,    0.0, 1.0, 1.0,
-];
+static vertex_data: [GLfloat, ..288] = [
+	 0.25,  0.25, 0.75, 1.0, // positions
+	 0.25, -0.25, 0.75, 1.0,
+	-0.25,  0.25, 0.75, 1.0,
 
-// */
+	 0.25, -0.25, 0.75, 1.0,
+	-0.25, -0.25, 0.75, 1.0,
+	-0.25,  0.25, 0.75, 1.0,
+
+	 0.25,  0.25, -0.75, 1.0,
+	-0.25,  0.25, -0.75, 1.0,
+	 0.25, -0.25, -0.75, 1.0,
+
+	 0.25, -0.25, -0.75, 1.0,
+	-0.25,  0.25, -0.75, 1.0,
+	-0.25, -0.25, -0.75, 1.0,
+
+	-0.25,  0.25,  0.75, 1.0,
+	-0.25, -0.25,  0.75, 1.0,
+	-0.25, -0.25, -0.75, 1.0,
+
+	-0.25,  0.25,  0.75, 1.0,
+	-0.25, -0.25, -0.75, 1.0,
+	-0.25,  0.25, -0.75, 1.0,
+
+	 0.25,  0.25,  0.75, 1.0,
+	 0.25, -0.25, -0.75, 1.0,
+	 0.25, -0.25,  0.75, 1.0,
+
+	 0.25,  0.25,  0.75, 1.0,
+	 0.25,  0.25, -0.75, 1.0,
+	 0.25, -0.25, -0.75, 1.0,
+
+	 0.25,  0.25, -0.75, 1.0,
+	 0.25,  0.25,  0.75, 1.0,
+	-0.25,  0.25,  0.75, 1.0,
+
+	 0.25,  0.25, -0.75, 1.0,
+	-0.25,  0.25,  0.75, 1.0,
+	-0.25,  0.25, -0.75, 1.0,
+
+	 0.25, -0.25, -0.75, 1.0,
+	-0.25, -0.25,  0.75, 1.0,
+	 0.25, -0.25,  0.75, 1.0,
+
+	 0.25, -0.25, -0.75, 1.0,
+	-0.25, -0.25, -0.75, 1.0,
+	-0.25, -0.25,  0.75, 1.0,
+
+
+
+
+	0.0, 0.0, 1.0, 1.0, // colors
+	0.0, 0.0, 1.0, 1.0,
+	0.0, 0.0, 1.0, 1.0,
+
+	0.0, 0.0, 1.0, 1.0,
+	0.0, 0.0, 1.0, 1.0,
+	0.0, 0.0, 1.0, 1.0,
+
+	0.8, 0.8, 0.8, 1.0,
+	0.8, 0.8, 0.8, 1.0,
+	0.8, 0.8, 0.8, 1.0,
+
+	0.8, 0.8, 0.8, 1.0,
+	0.8, 0.8, 0.8, 1.0,
+	0.8, 0.8, 0.8, 1.0,
+
+	0.0, 1.0, 0.0, 1.0,
+	0.0, 1.0, 0.0, 1.0,
+	0.0, 1.0, 0.0, 1.0,
+
+	0.0, 1.0, 0.0, 1.0,
+	0.0, 1.0, 0.0, 1.0,
+	0.0, 1.0, 0.0, 1.0,
+
+	0.5, 0.5, 0.0, 1.0,
+	0.5, 0.5, 0.0, 1.0,
+	0.5, 0.5, 0.0, 1.0,
+
+	0.5, 0.5, 0.0, 1.0,
+	0.5, 0.5, 0.0, 1.0,
+	0.5, 0.5, 0.0, 1.0,
+
+	1.0, 0.0, 0.0, 1.0,
+	1.0, 0.0, 0.0, 1.0,
+	1.0, 0.0, 0.0, 1.0,
+
+	1.0, 0.0, 0.0, 1.0,
+	1.0, 0.0, 0.0, 1.0,
+	1.0, 0.0, 0.0, 1.0,
+
+	0.0, 1.0, 1.0, 1.0,
+	0.0, 1.0, 1.0, 1.0,
+	0.0, 1.0, 1.0, 1.0,
+
+	0.0, 1.0, 1.0, 1.0,
+	0.0, 1.0, 1.0, 1.0,
+	0.0, 1.0, 1.0, 1.0,
+
+];
 
 fn init_program() -> GLuint {
 	println!("== init program ==");
 	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file("movetri.vert", gl::VERTEX_SHADER));
-    shader_list.push(shaders::load_shader_file("movetri.frag", gl::FRAGMENT_SHADER));
-    let program = shaders::create_program(&shader_list);
+	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/OrthoWithOffset.vert"));
+    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/StandardColors.frag"));
+    let mut program = shaders::create_program(&shader_list);
 
 	for s in shader_list.iter() {
 		gl::DeleteShader(*s);
@@ -55,64 +143,71 @@ fn init_program() -> GLuint {
 	program
 }
 
-fn init_vertex_buffer(vbo: &mut GLuint) {
-	unsafe {
-		gl::GenBuffers(1, vbo);
 
-		gl::BindBuffer(gl::ARRAY_BUFFER, *vbo);
+fn init_vertex_buffer() -> GLuint {
+	let mut vbo: GLuint = 0;
+	unsafe {
+		gl::GenBuffers(1, &mut vbo);
+
+		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
+	vbo
 }
 
-fn init_color_buffer(cbo: &mut GLuint) {
-	unsafe {
-		gl::GenBuffers(1, cbo);
+fn init() -> (GLuint, GLuint, GLuint, GLint) {
+	let mut program =init_program();
+	let mut vbo = init_vertex_buffer();
+	let mut vao = 0;
 
-		gl::BindBuffer(gl::ARRAY_BUFFER, *cbo);
-		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&color_data[0]), gl::STATIC_DRAW);
-		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+	unsafe{
+		gl::GenVertexArrays(1, &mut vao);
 	}
-}
+	gl::BindVertexArray(vao);
 
-fn compute_offsets(felap_time: f32) -> (f32, f32) {
-	let floop_duration: f32 = 5.0;
-	let fscale: f32 = 3.14159 * 2.0 / floop_duration;
+	gl::Enable(gl::CULL_FACE);
+	gl::CullFace(gl::BACK);
+	gl::FrontFace(gl::CW);
 
-	//let (_, fcurr_time_in_loop) = num::div_rem(felap_time, floop_duration);
-	//let fcurr_time_in_loop = felap_time % floop_duration;
-	//wiki: modulo definition: a % n = a - (n * floor(a/n))
-	let fcurr_time_in_loop = felap_time - (floop_duration * (felap_time / floop_duration).floor());
-
-	((fcurr_time_in_loop * fscale).cos() * 0.5, (fcurr_time_in_loop * fscale).sin() * 0.5)
-}
-
-fn adjust_vert_data(vbo: GLuint, xoff: f32, yoff: f32) {
-	//let mut adjvert_data: [GLfloat, ..12] = [0.0, ..12];
-	let mut adjvert_data_vec = Vec::from_slice(vertex_data);
-	let mut adjvert_data = adjvert_data_vec.as_mut_slice();
-
-
-	let mut i = 0;
-	while i < vertex_data.len() {
-		adjvert_data[i] += xoff;
-		adjvert_data[i+1] += yoff;
-		i+=4;
-	}
-
+	let mut offset_unif = 0;
+	gl::UseProgram(program);
 	unsafe {
+		offset_unif = gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr));
+		//offset_unif = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
+	}
+	gl::UseProgram(0);
+
+	(program, vbo, vao, offset_unif)
+}
+
+fn display(program: GLuint, vbo: GLuint, offset_unif: GLint) {
+	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
+	gl::Clear(gl::COLOR_BUFFER_BIT);
+
+	gl::UseProgram(program);
+	gl::Uniform2f(offset_unif, 0.5, 0.25);
+
+	let color_data = vertex_data.len() * mem::size_of::<GLfloat>() / 2;
 	gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-	gl::BufferSubData(gl::ARRAY_BUFFER, 0, (adjvert_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&adjvert_data[0]));
-	gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+	gl::EnableVertexAttribArray(0);
+	gl::EnableVertexAttribArray(1);
+	unsafe{
+		gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
+		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, cast::transmute(color_data));
 	}
 
+	gl::DrawArrays(gl::TRIANGLES, 0, 36);
+
+	gl::DisableVertexAttribArray(0);
+	gl::DisableVertexAttribArray(1);
+	gl::UseProgram(0);
 }
 
 fn main() {
-	// init glfw
     let glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
-    // Choose a GL profile that is compatible with OS X 10.7+
+    // Choose a GL profile that is compatible with OS X 10.7+ -- from example code
     glfw.window_hint(glfw::ContextVersion(3, 2));
     glfw.window_hint(glfw::OpenglForwardCompat(true));
     glfw.window_hint(glfw::OpenglProfile(glfw::OpenGlCoreProfile));
@@ -120,69 +215,12 @@ fn main() {
     let (window, events) = glfw.create_window(800, 600, "OpenGL", glfw::Windowed)
         .expect("Failed to create GLFW window.");
 
-    // It is essential to make the context current before calling `gl::load_with`.
-    window.make_current();
+    window.make_current(); //make context current before calling gl::load_with
+    window.set_key_polling(true); //enable internal polling function
 
-	// if true, set the polling function internally [in glfw c, you have to provide the keyboard function
-    window.set_key_polling(true);
+    gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
-    // Load the OpenGL function pointers
-    gl::load_with(|s| glfw.get_proc_address(s));
-	println!("loaded opengl functions");
-
-    // Create GLSL shader program
-	let program = init_program();
-	println!("compiled shaders");
-
-	let mut loop_duration_loc;
-	let mut time_loc;
-	unsafe {
-		loop_duration_loc = "loop_duration".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
-		time_loc = "time".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
-	}
-
-	gl::UseProgram(program);
-	gl::Uniform1f(loop_duration_loc, 5.0);
-	gl::UseProgram(0);
-
-
-    let mut vao = 0;
-    let mut vbo = 0;
-	let mut cbo = 0;
-	init_vertex_buffer(&mut vbo);
-	init_color_buffer(&mut cbo);
-	println!("init vertex buffer");
-
-	unsafe{
-		gl::GenVertexArrays(1, &mut vao);
-	}
-	gl::BindVertexArray(vao);
-
-	/*
-    unsafe {
-        // Create Vertex Array Object
-        gl::GenVertexArrays(1, &mut vao);
-        gl::BindVertexArray(vao);
-
-        // Create a Vertex Buffer Object and copy the vertex data to it
-        gl::GenBuffers(1, &mut vbo);
-        gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-        gl::BufferData(gl::ARRAY_BUFFER,
-                       (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr,
-                       cast::transmute(&vertex_data[0]),
-                       gl::STATIC_DRAW);
-
-        // Use shader program
-        gl::UseProgram(program);
-        "out_color".with_c_str(|ptr| gl::BindFragDataLocation(program, 0, ptr));
-
-        // Specify the layout of the vertex data
-        let pos_attr = "position".with_c_str(|ptr| gl::GetAttribLocation(program, ptr));
-        gl::EnableVertexAttribArray(pos_attr as GLuint);
-        gl::VertexAttribPointer(pos_attr as GLuint, 2, gl::FLOAT,
-                                gl::FALSE as GLboolean, 0, ptr::null());
-    }
-	*/
+	let (mut program, mut vbo, mut vao, mut offset_unif) = init();
 
 
     while !window.should_close() {
@@ -191,36 +229,8 @@ fn main() {
             handle_window_event(&window, event);
         }
 
-		//let (xoff, yoff) = compute_offsets(glfw.get_time() as f32);
-		// adjust_vert_data(vbo, xoff, yoff);
-
-
-        // Clear the screen to black
-        gl::ClearColor(0.0, 0.0, 0.0, 0.0);
-        gl::Clear(gl::COLOR_BUFFER_BIT);
-
-		gl::UseProgram(program);
-
-		gl::Uniform1f(loop_duration_loc, 5.0);
-		gl::Uniform1f(time_loc, glfw.get_time() as f32);
-
-		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-		gl::EnableVertexAttribArray(0);
-		unsafe{
-			gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
-		}
-
-		gl::DrawArrays(gl::TRIANGLES, 0, 3);
-
-		gl::Uniform1f(loop_duration_loc, 2.5);
-		gl::DrawArrays(gl::TRIANGLES, 0, 3);
-
-		gl::DisableVertexAttribArray(0);
-		gl::DisableVertexAttribArray(1);
-		gl::UseProgram(0);
-
-        // Swap buffers
-        window.swap_buffers();
+		display(program, vbo, offset_unif);
+		window.swap_buffers();
     }
 
     // Cleanup
