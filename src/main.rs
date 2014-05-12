@@ -170,14 +170,13 @@ fn init() -> (GLuint, GLuint, GLuint, GLint) {
 	gl::CullFace(gl::BACK);
 	gl::FrontFace(gl::CW);
 
-	let mut offset_unif = 0;
-	let mut perspective_mat_unif = 0;
-	gl::UseProgram(program);
-	unsafe {
+	let mut offset_unif = unsafe {
 		//offset_unif = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
-		offset_unif = gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr));
-		perspective_mat_unif = gl::GetUniformLocation(program, "perspectiveMatrix".with_c_str(|ptr| ptr));
-	}
+		gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr))
+	};
+	let mut perspective_mat_unif = unsafe { gl::GetUniformLocation(program, "perspectiveMatrix".with_c_str(|ptr| ptr)) };
+
+	gl::UseProgram(program);
 
 	let frustum_scale = 1.0;
 	let (znear, zfar) = (0.5, 3.0);
@@ -235,6 +234,7 @@ fn main() {
 
     window.make_current(); //make context current before calling gl::load_with
     window.set_key_polling(true); //enable internal polling function
+	window.set_size_polling(true); //enable polling for size changes
 
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
@@ -244,7 +244,12 @@ fn main() {
     while !window.should_close() {
         glfw.poll_events();
         for (_, event) in glfw::flush_messages(&events) {
-            handle_window_event(&window, event);
+			match event {
+				glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => { window.set_should_close(true) }
+				glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _)      => { window.set_should_close(true) }
+				glfw::SizeEvent(w, h) => { resize(w, h, program); }
+				_ => {}
+			}
         }
 
 		display(program, vbo, offset_unif);
@@ -264,23 +269,30 @@ fn start(argc: int, argv: **u8) -> int {
     native::start(argc, argv, main)
 }
 
-fn handle_window_event(window: &glfw::Window, event: glfw::WindowEvent) {
-    match event {
-        glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => {
-            window.set_should_close(true)
-        }
-        glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => {
-            window.set_should_close(true)
-        }
-		glfw::FramebufferSizeEvent(w, h) => {
-			resize(w, h);
-		}
-        _ => {}
-    }
-}
 
-fn resize(w: i32, h: i32) {
+
+fn resize(w: i32, h: i32, program: GLuint) {
 	println!("resize event: {} x {}", w, h);
+
+	gl::UseProgram(program);
+	let mut perspective_mat_unif = unsafe { gl::GetUniformLocation(program, "perspectiveMatrix".with_c_str(|ptr| ptr)) };
+
+	let frustum_scale = 1.0;
+	let (znear, zfar) = (0.5, 3.0);
+
+	let perspective_mat: [GLfloat, ..16] = [ //column major order
+		frustum_scale / ((w as GLfloat) / (h as GLfloat)), 0.0, 0.0, 0.0,
+		0.0, frustum_scale, 0.0, 0.0,
+		0.0, 0.0, (zfar + znear) / (znear - zfar), -1.0,
+		0.0, 0.0, (2.0 * zfar * znear) / (znear - zfar), 0.0,
+	];
+
+	unsafe {
+		gl::UniformMatrix4fv(perspective_mat_unif, 1, gl::FALSE, &perspective_mat[0]);
+	}
+	gl::UseProgram(0);
+
+
 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
 }
 
