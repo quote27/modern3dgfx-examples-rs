@@ -133,7 +133,7 @@ static vertex_data: [GLfloat, ..288] = [
 fn init_program() -> GLuint {
 	println!("== init program ==");
 	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/ManualPerspective.vert"));
+	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/MatrixPerspective.vert"));
     shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/StandardColors.frag"));
     let mut program = shaders::create_program(&shader_list);
 
@@ -171,20 +171,28 @@ fn init() -> (GLuint, GLuint, GLuint, GLint) {
 	gl::FrontFace(gl::CW);
 
 	let mut offset_unif = 0;
-	let mut frustum_scale_unif = 0;
-	let mut znear_unif = 0;
-	let mut zfar_unif = 0;
+	let mut perspective_mat_unif = 0;
 	gl::UseProgram(program);
 	unsafe {
-		offset_unif = gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr));
-		frustum_scale_unif = gl::GetUniformLocation(program, "frustumScale".with_c_str(|ptr| ptr));
-		znear_unif = gl::GetUniformLocation(program, "zNear".with_c_str(|ptr| ptr));
-		zfar_unif = gl::GetUniformLocation(program, "zFar".with_c_str(|ptr| ptr));
 		//offset_unif = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
+		offset_unif = gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr));
+		perspective_mat_unif = gl::GetUniformLocation(program, "perspectiveMatrix".with_c_str(|ptr| ptr));
 	}
-	gl::Uniform1f(frustum_scale_unif, 1.0);
-	gl::Uniform1f(znear_unif, 1.0);
-	gl::Uniform1f(zfar_unif, 3.0);
+
+	let frustum_scale = 1.0;
+	let (znear, zfar) = (0.5, 3.0);
+
+	let perspective_mat: [GLfloat, ..16] = [ //column major order
+		frustum_scale, 0.0, 0.0, 0.0,
+		0.0, frustum_scale, 0.0, 0.0,
+		0.0, 0.0, (zfar + znear) / (znear - zfar), -1.0,
+		0.0, 0.0, (2.0 * zfar * znear) / (znear - zfar), 0.0,
+	];
+
+	unsafe {
+		gl::UniformMatrix4fv(perspective_mat_unif, 1, gl::FALSE, &perspective_mat[0]);
+	}
+
 	gl::UseProgram(0);
 
 	(program, vbo, vao, offset_unif)
@@ -220,7 +228,7 @@ fn main() {
     glfw.window_hint(glfw::ContextVersion(3, 2));
     glfw.window_hint(glfw::OpenglForwardCompat(true));
     glfw.window_hint(glfw::OpenglProfile(glfw::OpenGlCoreProfile));
-	glfw.window_hint(glfw::Resizable(false));
+	//glfw.window_hint(glfw::Resizable(false));
 
     let (window, events) = glfw.create_window(600, 600, "OpenGL", glfw::Windowed)
         .expect("Failed to create GLFW window.");
@@ -228,7 +236,6 @@ fn main() {
     window.make_current(); //make context current before calling gl::load_with
     window.set_key_polling(true); //enable internal polling function
 
-	window.set_size(600, 600);
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
 	let (mut program, mut vbo, mut vao, mut offset_unif) = init();
@@ -265,12 +272,16 @@ fn handle_window_event(window: &glfw::Window, event: glfw::WindowEvent) {
         glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => {
             window.set_should_close(true)
         }
+		glfw::FramebufferSizeEvent(w, h) => {
+			resize(w, h);
+		}
         _ => {}
     }
 }
 
-// fn reshape(w: int, h: int) {
-// 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
-// }
+fn resize(w: i32, h: i32) {
+	println!("resize event: {} x {}", w, h);
+	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
+}
 
 
