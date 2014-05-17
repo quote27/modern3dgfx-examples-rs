@@ -27,115 +27,163 @@ use std::ptr;
 
 mod shaders;
 
+static RIGHT_EXTENT: GLfloat = 0.8;
+static LEFT_EXTENT: GLfloat = -0.8;//-RIGHT_EXTENT;
+static TOP_EXTENT: GLfloat = 0.20;
+static MIDDLE_EXTENT: GLfloat = 0.0;
+static BOTTOM_EXTENT: GLfloat = -0.20;//-TOP_EXTENT;
+static FRONT_EXTENT: GLfloat = -1.25;
+static REAR_EXTENT: GLfloat = -1.75;
 
-static vertex_data: [GLfloat, ..288] = [
-	 0.25,  0.25, -1.25, 1.0,
-	 0.25, -0.25, -1.25, 1.0,
-	-0.25,  0.25, -1.25, 1.0,
+static GREEN_COLOR:[GLfloat, ..4]  = [0.75, 0.75, 1.0, 1.0];
+static BLUE_COLOR: [GLfloat, ..4]  = [0.0, 0.5, 0.0, 1.0];
+static RED_COLOR:  [GLfloat, ..4]  = [1.0, 0.0, 0.0, 1.0];
+static GREY_COLOR: [GLfloat, ..4]  = [0.8, 0.8, 0.8, 1.0];
+static BROWN_COLOR:[GLfloat, ..4]  = [0.5, 0.5, 0.0, 1.0];
 
-	 0.25, -0.25, -1.25, 1.0,
-	-0.25, -0.25, -1.25, 1.0,
-	-0.25,  0.25, -1.25, 1.0,
+static vertex_num: uint = 36;
+static vertex_data:[GLfloat, ..252] = [
+	//Object 1 positions
+	LEFT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
+	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+	RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+	RIGHT_EXTENT,	TOP_EXTENT,		REAR_EXTENT, //12
 
-	 0.25,  0.25, -2.75, 1.0,
-	-0.25,  0.25, -2.75, 1.0,
-	 0.25, -0.25, -2.75, 1.0,
+	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT,
+	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+	RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+	RIGHT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //12
 
-	 0.25, -0.25, -2.75, 1.0,
-	-0.25,  0.25, -2.75, 1.0,
-	-0.25, -0.25, -2.75, 1.0,
+	LEFT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
+	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //9
 
-	-0.25,  0.25, -1.25, 1.0,
-	-0.25, -0.25, -1.25, 1.0,
-	-0.25, -0.25, -2.75, 1.0,
+	RIGHT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
+	RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
+	RIGHT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //9
 
-	-0.25,  0.25, -1.25, 1.0,
-	-0.25, -0.25, -2.75, 1.0,
-	-0.25,  0.25, -2.75, 1.0,
+	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT,
+	LEFT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
+	RIGHT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
+	RIGHT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //12
 
-	 0.25,  0.25, -1.25, 1.0,
-	 0.25, -0.25, -2.75, 1.0,
-	 0.25, -0.25, -1.25, 1.0,
+	//Object 2 positions
+	TOP_EXTENT,		RIGHT_EXTENT,	REAR_EXTENT,
+	MIDDLE_EXTENT,	RIGHT_EXTENT,	FRONT_EXTENT,
+	MIDDLE_EXTENT,	LEFT_EXTENT,	FRONT_EXTENT,
+	TOP_EXTENT,		LEFT_EXTENT,	REAR_EXTENT, //12
 
-	 0.25,  0.25, -1.25, 1.0,
-	 0.25,  0.25, -2.75, 1.0,
-	 0.25, -0.25, -2.75, 1.0,
+	BOTTOM_EXTENT,	RIGHT_EXTENT,	REAR_EXTENT,
+	MIDDLE_EXTENT,	RIGHT_EXTENT,	FRONT_EXTENT,
+	MIDDLE_EXTENT,	LEFT_EXTENT,	FRONT_EXTENT,
+	BOTTOM_EXTENT,	LEFT_EXTENT,	REAR_EXTENT, //12
 
-	 0.25,  0.25, -2.75, 1.0,
-	 0.25,  0.25, -1.25, 1.0,
-	-0.25,  0.25, -1.25, 1.0,
+	TOP_EXTENT,		RIGHT_EXTENT,	REAR_EXTENT,
+	MIDDLE_EXTENT,	RIGHT_EXTENT,	FRONT_EXTENT,
+	BOTTOM_EXTENT,	RIGHT_EXTENT,	REAR_EXTENT, //9
+					
+	TOP_EXTENT,		LEFT_EXTENT,	REAR_EXTENT,
+	MIDDLE_EXTENT,	LEFT_EXTENT,	FRONT_EXTENT,
+	BOTTOM_EXTENT,	LEFT_EXTENT,	REAR_EXTENT, //9
+					
+	BOTTOM_EXTENT,	RIGHT_EXTENT,	REAR_EXTENT,
+	TOP_EXTENT,		RIGHT_EXTENT,	REAR_EXTENT,
+	TOP_EXTENT,		LEFT_EXTENT,	REAR_EXTENT,
+	BOTTOM_EXTENT,	LEFT_EXTENT,	REAR_EXTENT, //12
 
-	 0.25,  0.25, -2.75, 1.0,
-	-0.25,  0.25, -1.25, 1.0,
-	-0.25,  0.25, -2.75, 1.0,
+	//Object 1 colors
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3], //12
 
-	 0.25, -0.25, -2.75, 1.0,
-	-0.25, -0.25, -1.25, 1.0,
-	 0.25, -0.25, -1.25, 1.0,
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3], //12
 
-	 0.25, -0.25, -2.75, 1.0,
-	-0.25, -0.25, -2.75, 1.0,
-	-0.25, -0.25, -1.25, 1.0,
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3], //9
 
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3], //9
 
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3], //12
 
+	//Object 2 colors
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3], //12
 
-	0.0, 0.0, 1.0, 1.0,
-	0.0, 0.0, 1.0, 1.0,
-	0.0, 0.0, 1.0, 1.0,
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3], //12
 
-	0.0, 0.0, 1.0, 1.0,
-	0.0, 0.0, 1.0, 1.0,
-	0.0, 0.0, 1.0, 1.0,
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3], //9
 
-	0.8, 0.8, 0.8, 1.0,
-	0.8, 0.8, 0.8, 1.0,
-	0.8, 0.8, 0.8, 1.0,
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3], //9
 
-	0.8, 0.8, 0.8, 1.0,
-	0.8, 0.8, 0.8, 1.0,
-	0.8, 0.8, 0.8, 1.0,
-
-	0.0, 1.0, 0.0, 1.0,
-	0.0, 1.0, 0.0, 1.0,
-	0.0, 1.0, 0.0, 1.0,
-
-	0.0, 1.0, 0.0, 1.0,
-	0.0, 1.0, 0.0, 1.0,
-	0.0, 1.0, 0.0, 1.0,
-
-	0.5, 0.5, 0.0, 1.0,
-	0.5, 0.5, 0.0, 1.0,
-	0.5, 0.5, 0.0, 1.0,
-
-	0.5, 0.5, 0.0, 1.0,
-	0.5, 0.5, 0.0, 1.0,
-	0.5, 0.5, 0.0, 1.0,
-
-	1.0, 0.0, 0.0, 1.0,
-	1.0, 0.0, 0.0, 1.0,
-	1.0, 0.0, 0.0, 1.0,
-
-	1.0, 0.0, 0.0, 1.0,
-	1.0, 0.0, 0.0, 1.0,
-	1.0, 0.0, 0.0, 1.0,
-
-	0.0, 1.0, 1.0, 1.0,
-	0.0, 1.0, 1.0, 1.0,
-	0.0, 1.0, 1.0, 1.0,
-
-	0.0, 1.0, 1.0, 1.0,
-	0.0, 1.0, 1.0, 1.0,
-	0.0, 1.0, 1.0, 1.0,
-
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
+	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3], //12
 ];
+
+static index_data: [GLshort, ..24] = [
+	0, 2, 1,
+	3, 2, 0,
+
+	4, 5, 6,
+	6, 7, 4,
+
+	8, 9, 10,
+	11, 13, 12,
+
+	14, 16, 15,
+	17, 16, 14,
+];
+
+static frustum_scale: GLfloat = 1.0;
+
+fn get_uniform(program: GLuint, name: &str) -> GLint {
+	unsafe { gl::GetUniformLocation(program, name.with_c_str(|ptr| ptr)) }
+	//alternative: unsafe { name.with_c_str(|ptr| gl::GetUniformLocation(program, ptr)); }
+}
+
+fn set_perspective_mat(program: GLuint, s0: GLfloat, s5: GLfloat) {
+	let (znear, zfar) = (1.0, 3.0);
+
+	let pm = [ //column major order
+		s0, 0.0, 0.0, 0.0,
+		0.0, s5, 0.0, 0.0,
+		0.0, 0.0, (zfar + znear) / (znear - zfar), -1.0,
+		0.0, 0.0, (2.0 * zfar * znear) / (znear - zfar), 0.0,
+	];
+	let pm_unif = get_uniform(program, "perspectiveMatrix");
+	gl::UseProgram(program);
+	unsafe {
+		gl::UniformMatrix4fv(pm_unif, 1, gl::FALSE, &pm[0]);
+	}
+	gl::UseProgram(0);
+}
 
 fn init_program() -> GLuint {
 	println!("== init program ==");
 	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/MatrixPerspective.vert"));
-    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/StandardColors.frag"));
-    let mut program = shaders::create_program(&shader_list);
+	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/Standard.vert"));
+    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/Standard.frag"));
+    let program = shaders::create_program(&shader_list);
 
 	for s in shader_list.iter() {
 		gl::DeleteShader(*s);
@@ -143,80 +191,103 @@ fn init_program() -> GLuint {
 	program
 }
 
-
-fn init_vertex_buffer() -> GLuint {
+fn init_vertex_buffer() -> (GLuint,GLuint) {
 	let mut vbo: GLuint = 0;
+	let mut ibo: GLuint = 0;
 	unsafe {
 		gl::GenBuffers(1, &mut vbo);
-
 		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
 		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
-	vbo
+	unsafe {
+		gl::GenBuffers(1, &mut ibo);
+		gl::BindBuffer(gl::ARRAY_BUFFER, ibo);
+		gl::BufferData(gl::ARRAY_BUFFER, (index_data.len() * mem::size_of::<GLshort>()) as GLsizeiptr, cast::transmute(&index_data[0]), gl::STATIC_DRAW);
+		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+	}
+	(vbo, ibo)
 }
 
-fn init() -> (GLuint, GLuint, GLuint, GLint) {
-	let mut program =init_program();
-	let mut vbo = init_vertex_buffer();
-	let mut vao = 0;
+fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> (GLuint, GLuint) {
+	let mut vao1 = 0;
+	let mut vao2 = 0;
 
+	//bind vertex data
 	unsafe{
-		gl::GenVertexArrays(1, &mut vao);
+		gl::GenVertexArrays(1, &mut vao1);
 	}
-	gl::BindVertexArray(vao);
+	gl::BindVertexArray(vao1);
+
+	let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
+
+	gl::BindBuffer(gl::ARRAY_BUFFER, vbo); 
+
+	gl::EnableVertexAttribArray(0);
+	gl::EnableVertexAttribArray(1);
+	unsafe {
+		gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
+		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, cast::transmute(color_data_offset));
+	}
+	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
+
+	gl::BindVertexArray(0); //unbind
+
+	//bind index data
+	unsafe{
+		gl::GenVertexArrays(1, &mut vao2);
+	}
+	gl::BindVertexArray(vao2);
+	
+	let pos_data_offset = mem::size_of::<GLfloat>() * 3 * (vertex_num/2);
+	let color_data_offset2 = color_data_offset + mem::size_of::<GLfloat>() * 4 * (vertex_num/2);
+	
+	gl::EnableVertexAttribArray(0);
+	gl::EnableVertexAttribArray(1);
+	unsafe {
+		gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, cast::transmute(pos_data_offset));
+		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, cast::transmute(color_data_offset2));
+	}
+	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
+
+	gl::BindVertexArray(0);
+
+	(vao1, vao2)
+}
+
+fn init() -> (GLuint, GLuint, GLuint, GLuint, GLuint) {
+	let program = init_program();
+	let (vbo, ibo) = init_vertex_buffer();
+	let (vao1, vao2) = init_vertex_array_obj(vbo, ibo);
 
 	gl::Enable(gl::CULL_FACE);
 	gl::CullFace(gl::BACK);
 	gl::FrontFace(gl::CW);
 
-	let mut offset_unif = unsafe {
-		//offset_unif = "offset".with_c_str(|ptr| gl::GetUniformLocation(program, ptr));
-		gl::GetUniformLocation(program, "offset".with_c_str(|ptr| ptr))
-	};
-	let mut perspective_mat_unif = unsafe { gl::GetUniformLocation(program, "perspectiveMatrix".with_c_str(|ptr| ptr)) };
+	set_perspective_mat(program, frustum_scale, frustum_scale);
 
-	gl::UseProgram(program);
-
-	let frustum_scale = 1.0;
-	let (znear, zfar) = (0.5, 3.0);
-
-	let perspective_mat: [GLfloat, ..16] = [ //column major order
-		frustum_scale, 0.0, 0.0, 0.0,
-		0.0, frustum_scale, 0.0, 0.0,
-		0.0, 0.0, (zfar + znear) / (znear - zfar), -1.0,
-		0.0, 0.0, (2.0 * zfar * znear) / (znear - zfar), 0.0,
-	];
-
-	unsafe {
-		gl::UniformMatrix4fv(perspective_mat_unif, 1, gl::FALSE, &perspective_mat[0]);
-	}
-
-	gl::UseProgram(0);
-
-	(program, vbo, vao, offset_unif)
+	(program, vbo, ibo, vao1, vao2)
 }
 
-fn display(program: GLuint, vbo: GLuint, offset_unif: GLint) {
+fn display(program: GLuint, vao1: GLuint, vao2: GLuint, offset_unif: GLint) {
 	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
 	gl::Clear(gl::COLOR_BUFFER_BIT);
 
 	gl::UseProgram(program);
-	gl::Uniform2f(offset_unif, 0.5, 0.5);
 
-	let color_data = vertex_data.len() * mem::size_of::<GLfloat>() / 2;
-	gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-	gl::EnableVertexAttribArray(0);
-	gl::EnableVertexAttribArray(1);
-	unsafe{
-		gl::VertexAttribPointer(0, 4, gl::FLOAT, gl::FALSE, 0, ptr::null());
-		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, cast::transmute(color_data));
+	gl::BindVertexArray(vao1);
+	gl::Uniform3f(offset_unif, 0.0, 0.0, 0.0);
+	unsafe {
+		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
 	}
 
-	gl::DrawArrays(gl::TRIANGLES, 0, 36);
+	gl::BindVertexArray(vao2);
+	gl::Uniform3f(offset_unif, 0.0, 0.0, -1.0);
+	unsafe {
+		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+	}
 
-	gl::DisableVertexAttribArray(0);
-	gl::DisableVertexAttribArray(1);
+	gl::BindVertexArray(0);
 	gl::UseProgram(0);
 }
 
@@ -238,7 +309,8 @@ fn main() {
 
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
-	let (mut program, mut vbo, mut vao, mut offset_unif) = init();
+	let (program, vbo, ibo, vao1, vao2) = init();
+	let offset_unif = get_uniform(program, "offset");
 
 
     while !window.should_close() {
@@ -252,7 +324,7 @@ fn main() {
 			}
         }
 
-		display(program, vbo, offset_unif);
+		display(program, vao1, vao2, offset_unif);
 		window.swap_buffers();
     }
 
@@ -260,7 +332,9 @@ fn main() {
     gl::DeleteProgram(program);
     unsafe {
         gl::DeleteBuffers(1, &vbo);
-        gl::DeleteVertexArrays(1, &vao);
+        gl::DeleteBuffers(1, &ibo);
+        gl::DeleteVertexArrays(1, &vao1);
+        gl::DeleteVertexArrays(1, &vao2);
     }
 }
 
@@ -273,26 +347,7 @@ fn start(argc: int, argv: **u8) -> int {
 
 fn resize(w: i32, h: i32, program: GLuint) {
 	println!("resize event: {} x {}", w, h);
-
-	gl::UseProgram(program);
-	let mut perspective_mat_unif = unsafe { gl::GetUniformLocation(program, "perspectiveMatrix".with_c_str(|ptr| ptr)) };
-
-	let frustum_scale = 1.0;
-	let (znear, zfar) = (0.5, 3.0);
-
-	let perspective_mat: [GLfloat, ..16] = [ //column major order
-		frustum_scale / ((w as GLfloat) / (h as GLfloat)), 0.0, 0.0, 0.0,
-		0.0, frustum_scale, 0.0, 0.0,
-		0.0, 0.0, (zfar + znear) / (znear - zfar), -1.0,
-		0.0, 0.0, (2.0 * zfar * znear) / (znear - zfar), 0.0,
-	];
-
-	unsafe {
-		gl::UniformMatrix4fv(perspective_mat_unif, 1, gl::FALSE, &perspective_mat[0]);
-	}
-	gl::UseProgram(0);
-
-
+	set_perspective_mat(program, frustum_scale / ((w as GLfloat) / (h as GLfloat)), frustum_scale);
 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
 }
 
