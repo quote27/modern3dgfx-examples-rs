@@ -244,6 +244,11 @@ fn init() -> (GLuint, GLuint, GLuint, GLuint) {
 	gl::CullFace(gl::BACK);
 	gl::FrontFace(gl::CW);
 
+	gl::Enable(gl::DEPTH_TEST);
+	gl::DepthMask(gl::TRUE);
+	gl::DepthFunc(gl::LEQUAL);
+	gl::DepthRange(0.0, 1.0);
+
 	set_perspective_mat(program, frustum_scale, frustum_scale);
 
 	(program, vbo, ibo, vao1)
@@ -251,12 +256,12 @@ fn init() -> (GLuint, GLuint, GLuint, GLuint) {
 
 fn display(program: GLuint, vao1: GLuint, offset_unif: GLint) {
 	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
-	gl::Clear(gl::COLOR_BUFFER_BIT);
+	gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
 	gl::UseProgram(program);
 
 	gl::BindVertexArray(vao1);
-	gl::Uniform3f(offset_unif, 0.0, 0.0, 0.0);
+	gl::Uniform3f(offset_unif, 0.0, 0.0, -1.00);
 	unsafe {
 		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
 	}
