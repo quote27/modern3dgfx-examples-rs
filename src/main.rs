@@ -209,9 +209,9 @@ fn init_vertex_buffer() -> (GLuint,GLuint) {
 	(vbo, ibo)
 }
 
-fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> (GLuint, GLuint) {
+fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> GLuint {
 	let mut vao1 = 0;
-	let mut vao2 = 0;
+	let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
 
 	//bind vertex data
 	unsafe{
@@ -219,7 +219,6 @@ fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> (GLuint, GLuint) {
 	}
 	gl::BindVertexArray(vao1);
 
-	let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
 
 	gl::BindBuffer(gl::ARRAY_BUFFER, vbo); 
 
@@ -233,32 +232,13 @@ fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> (GLuint, GLuint) {
 
 	gl::BindVertexArray(0); //unbind
 
-	//bind index data
-	unsafe{
-		gl::GenVertexArrays(1, &mut vao2);
-	}
-	gl::BindVertexArray(vao2);
-	
-	let pos_data_offset = mem::size_of::<GLfloat>() * 3 * (vertex_num/2);
-	let color_data_offset2 = color_data_offset + mem::size_of::<GLfloat>() * 4 * (vertex_num/2);
-	
-	gl::EnableVertexAttribArray(0);
-	gl::EnableVertexAttribArray(1);
-	unsafe {
-		gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, cast::transmute(pos_data_offset));
-		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, cast::transmute(color_data_offset2));
-	}
-	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
-
-	gl::BindVertexArray(0);
-
-	(vao1, vao2)
+	vao1
 }
 
-fn init() -> (GLuint, GLuint, GLuint, GLuint, GLuint) {
+fn init() -> (GLuint, GLuint, GLuint, GLuint) {
 	let program = init_program();
 	let (vbo, ibo) = init_vertex_buffer();
-	let (vao1, vao2) = init_vertex_array_obj(vbo, ibo);
+	let vao1 = init_vertex_array_obj(vbo, ibo);
 
 	gl::Enable(gl::CULL_FACE);
 	gl::CullFace(gl::BACK);
@@ -266,10 +246,10 @@ fn init() -> (GLuint, GLuint, GLuint, GLuint, GLuint) {
 
 	set_perspective_mat(program, frustum_scale, frustum_scale);
 
-	(program, vbo, ibo, vao1, vao2)
+	(program, vbo, ibo, vao1)
 }
 
-fn display(program: GLuint, vao1: GLuint, vao2: GLuint, offset_unif: GLint) {
+fn display(program: GLuint, vao1: GLuint, offset_unif: GLint) {
 	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
 	gl::Clear(gl::COLOR_BUFFER_BIT);
 
@@ -281,10 +261,9 @@ fn display(program: GLuint, vao1: GLuint, vao2: GLuint, offset_unif: GLint) {
 		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
 	}
 
-	gl::BindVertexArray(vao2);
 	gl::Uniform3f(offset_unif, 0.0, 0.0, -1.0);
 	unsafe {
-		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		gl::DrawElementsBaseVertex(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null(), vertex_num as i32 / 2);
 	}
 
 	gl::BindVertexArray(0);
@@ -309,7 +288,7 @@ fn main() {
 
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
-	let (program, vbo, ibo, vao1, vao2) = init();
+	let (program, vbo, ibo, vao1) = init();
 	let offset_unif = get_uniform(program, "offset");
 
 
@@ -324,7 +303,7 @@ fn main() {
 			}
         }
 
-		display(program, vao1, vao2, offset_unif);
+		display(program, vao1, offset_unif);
 		window.swap_buffers();
     }
 
@@ -334,7 +313,6 @@ fn main() {
         gl::DeleteBuffers(1, &vbo);
         gl::DeleteBuffers(1, &ibo);
         gl::DeleteVertexArrays(1, &vao1);
-        gl::DeleteVertexArrays(1, &vao2);
     }
 }
 
