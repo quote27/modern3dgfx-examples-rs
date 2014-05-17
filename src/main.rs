@@ -266,7 +266,7 @@ fn display(program: GLuint, vao1: GLuint, offset_unif: GLint) {
 		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
 	}
 
-	gl::Uniform3f(offset_unif, 0.0, 0.0, -1.0);
+	gl::Uniform3f(offset_unif, 0.0, 0.0, 0.5);
 	unsafe {
 		gl::DrawElementsBaseVertex(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null(), vertex_num as i32 / 2);
 	}
@@ -296,6 +296,8 @@ fn main() {
 	let (program, vbo, ibo, vao1) = init();
 	let offset_unif = get_uniform(program, "offset");
 
+	let mut depth_clamp = false;
+
 
     while !window.should_close() {
         glfw.poll_events();
@@ -303,6 +305,14 @@ fn main() {
 			match event {
 				glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => { window.set_should_close(true) }
 				glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _)      => { window.set_should_close(true) }
+				glfw::KeyEvent(glfw::KeyD, _, glfw::Press, _)      => {
+					if depth_clamp {
+						gl::Disable(gl::DEPTH_CLAMP);
+					} else {
+						gl::Enable(gl::DEPTH_CLAMP);
+					}
+					depth_clamp = !depth_clamp;
+				}
 				glfw::SizeEvent(w, h) => { resize(w, h, program); }
 				_ => {}
 			}
