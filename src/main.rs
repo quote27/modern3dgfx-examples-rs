@@ -18,170 +18,78 @@
 extern crate gl;
 extern crate glfw;
 extern crate native;
+extern crate nalgebra;
 
 use gl::types::*;
 use glfw::Context;
 use std::mem;
 use std::ptr;
+use nalgebra::na::{Vec4, Mat4};
+use nalgebra::na;
+
 
 mod shaders;
-
-static RIGHT_EXTENT: GLfloat = 0.8;
-static LEFT_EXTENT: GLfloat = -0.8;//-RIGHT_EXTENT;
-static TOP_EXTENT: GLfloat = 0.20;
-static MIDDLE_EXTENT: GLfloat = 0.0;
-static BOTTOM_EXTENT: GLfloat = -0.20;//-TOP_EXTENT;
-static FRONT_EXTENT: GLfloat = -1.25;
-static REAR_EXTENT: GLfloat = -1.75;
 
 static GREEN_COLOR:[GLfloat, ..4]  = [0.75, 0.75, 1.0, 1.0];
 static BLUE_COLOR: [GLfloat, ..4]  = [0.0, 0.5, 0.0, 1.0];
 static RED_COLOR:  [GLfloat, ..4]  = [1.0, 0.0, 0.0, 1.0];
-static GREY_COLOR: [GLfloat, ..4]  = [0.8, 0.8, 0.8, 1.0];
+//static GREY_COLOR: [GLfloat, ..4]  = [0.8, 0.8, 0.8, 1.0];
 static BROWN_COLOR:[GLfloat, ..4]  = [0.5, 0.5, 0.0, 1.0];
 
-static vertex_num: uint = 36;
-static vertex_data:[GLfloat, ..252] = [
+static vertex_num: uint = 8;
+static vertex_data:[GLfloat, ..56] = [
 	//Object 1 positions
-	LEFT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
-	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-	RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-	RIGHT_EXTENT,	TOP_EXTENT,		REAR_EXTENT, //12
+	 1.0,  1.0,  1.0,
+	-1.0, -1.0,  1.0,
+	-1.0,  1.0, -1.0,
+	 1.0, -1.0, -1.0,
 
-	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT,
-	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-	RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-	RIGHT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //12
-
-	LEFT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
-	LEFT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //9
-
-	RIGHT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
-	RIGHT_EXTENT,	MIDDLE_EXTENT,	FRONT_EXTENT,
-	RIGHT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //9
-
-	LEFT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT,
-	LEFT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
-	RIGHT_EXTENT,	TOP_EXTENT,		REAR_EXTENT,
-	RIGHT_EXTENT,	BOTTOM_EXTENT,	REAR_EXTENT, //12
-
-	//Object 2 positions
-	TOP_EXTENT,		RIGHT_EXTENT,	REAR_EXTENT,
-	MIDDLE_EXTENT,	RIGHT_EXTENT,	FRONT_EXTENT,
-	MIDDLE_EXTENT,	LEFT_EXTENT,	FRONT_EXTENT,
-	TOP_EXTENT,		LEFT_EXTENT,	REAR_EXTENT, //12
-
-	BOTTOM_EXTENT,	RIGHT_EXTENT,	REAR_EXTENT,
-	MIDDLE_EXTENT,	RIGHT_EXTENT,	FRONT_EXTENT,
-	MIDDLE_EXTENT,	LEFT_EXTENT,	FRONT_EXTENT,
-	BOTTOM_EXTENT,	LEFT_EXTENT,	REAR_EXTENT, //12
-
-	TOP_EXTENT,		RIGHT_EXTENT,	REAR_EXTENT,
-	MIDDLE_EXTENT,	RIGHT_EXTENT,	FRONT_EXTENT,
-	BOTTOM_EXTENT,	RIGHT_EXTENT,	REAR_EXTENT, //9
-					
-	TOP_EXTENT,		LEFT_EXTENT,	REAR_EXTENT,
-	MIDDLE_EXTENT,	LEFT_EXTENT,	FRONT_EXTENT,
-	BOTTOM_EXTENT,	LEFT_EXTENT,	REAR_EXTENT, //9
-					
-	BOTTOM_EXTENT,	RIGHT_EXTENT,	REAR_EXTENT,
-	TOP_EXTENT,		RIGHT_EXTENT,	REAR_EXTENT,
-	TOP_EXTENT,		LEFT_EXTENT,	REAR_EXTENT,
-	BOTTOM_EXTENT,	LEFT_EXTENT,	REAR_EXTENT, //12
-
-	//Object 1 colors
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3], //12
-
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3], //12
-
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3], //9
-
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3], //9
-
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3], //12
-
-	//Object 2 colors
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3], //12
-
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3], //12
-
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3], //9
+	-1.0, -1.0, -1.0,
+	 1.0,  1.0, -1.0,
+	 1.0, -1.0,  1.0,
+	-1.0,  1.0,  1.0,
 
 	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3], //9
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
 
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3],
-	GREY_COLOR[0], GREY_COLOR[1], GREY_COLOR[2], GREY_COLOR[3], //12
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
 ];
 
 static index_data: [GLshort, ..24] = [
-	0, 2, 1,
-	3, 2, 0,
+	0, 1, 2,
+	1, 0, 3,
+	2, 3, 0,
+	3, 2, 1,
 
-	4, 5, 6,
-	6, 7, 4,
-
-	8, 9, 10,
-	11, 13, 12,
-
-	14, 16, 15,
-	17, 16, 14,
+	5, 4, 6,
+	4, 5, 7,
+	7, 6, 4,
+	6, 7, 5,
 ];
 
-static frustum_scale: GLfloat = 1.0;
+fn calc_frustum_scale(fov_deg: f32) -> f32 {
+	// one liner: 1.0 / (fov_deg.to_radians() / 2.0).tan()
+	let deg_rad = 3.14159 * 2.0 / 360.0;
+	let fov_rad = fov_deg * deg_rad;
+	1.0 / (fov_rad / 2.0).tan()
+}
 
 fn get_uniform(program: GLuint, name: &str) -> GLint {
 	unsafe { gl::GetUniformLocation(program, name.with_c_str(|ptr| ptr)) }
 	//alternative: unsafe { name.with_c_str(|ptr| gl::GetUniformLocation(program, ptr)); }
 }
 
-fn set_perspective_mat(program: GLuint, s0: GLfloat, s5: GLfloat) {
-	let (znear, zfar) = (1.0, 3.0);
-
-	let pm = [ //column major order
-		s0, 0.0, 0.0, 0.0,
-		0.0, s5, 0.0, 0.0,
-		0.0, 0.0, (zfar + znear) / (znear - zfar), -1.0,
-		0.0, 0.0, (2.0 * zfar * znear) / (znear - zfar), 0.0,
-	];
-	let pm_unif = get_uniform(program, "perspectiveMatrix");
-	gl::UseProgram(program);
-	unsafe {
-		gl::UniformMatrix4fv(pm_unif, 1, gl::FALSE, &pm[0]);
-	}
-	gl::UseProgram(0);
-}
 
 fn init_program() -> GLuint {
 	println!("== init program ==");
 	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/Standard.vert"));
-    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/Standard.frag"));
+	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/PosColorLocalTransform.vert"));
+    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/ColorPassthrough.frag"));
     let program = shaders::create_program(&shader_list);
 
 	for s in shader_list.iter() {
@@ -234,7 +142,7 @@ fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> GLuint {
 	vao1
 }
 
-fn init() -> (GLuint, GLuint, GLuint, GLuint) {
+fn init() -> (GLuint, GLuint, GLuint, GLuint, Mat4<f32>, f32) {
 	let program = init_program();
 	let (vbo, ibo) = init_vertex_buffer();
 	let vao1 = init_vertex_array_obj(vbo, ibo);
@@ -245,29 +153,82 @@ fn init() -> (GLuint, GLuint, GLuint, GLuint) {
 
 	gl::Enable(gl::DEPTH_TEST);
 	gl::DepthMask(gl::TRUE);
-	gl::DepthFunc(gl::LESS);
+	gl::DepthFunc(gl::LEQUAL);
 	gl::DepthRange(0.0, 1.0);
 
-	set_perspective_mat(program, frustum_scale, frustum_scale);
+	//TODO: camera to clip matrix
+	let frustum_scale = calc_frustum_scale(45.0);
+	let (znear, zfar) = (1.0, 45.0);
+	let mut cam_clip_m: Mat4<f32> = na::zero();
 
-	(program, vbo, ibo, vao1)
+	cam_clip_m.m11 = frustum_scale;
+	cam_clip_m.m22 = frustum_scale;
+	cam_clip_m.m33 = (zfar + znear) / (znear - zfar);
+	cam_clip_m.m34 = -1.0;
+	cam_clip_m.m43 = (2.0 * zfar * znear) / (znear - zfar);
+
+	let cam_clip_unif = get_uniform(program, "cameraToClipMatrix");
+	gl::UseProgram(program);
+	unsafe { gl::UniformMatrix4fv(cam_clip_unif, 1, gl::TRUE, mem::transmute(&cam_clip_m.m11)); }
+	gl::UseProgram(0);
+
+	(program, vbo, ibo, vao1, cam_clip_m, frustum_scale)
 }
 
-fn display(program: GLuint, vao1: GLuint, offset_unif: GLint) {
+fn stationary_offset(elap_time: f32) -> Vec4<f32> {
+	Vec4::new(0.0, 0.0, -20.0, 1.0)
+}
+
+fn oval_offset(elap_time: f32) -> Vec4<f32> {
+	let fscale = 3.14159 * 2.0 / 5.0;
+	let elap_time_scale = elap_time * fscale;
+	Vec4::new(
+		elap_time_scale.cos() * 4.0,
+		elap_time_scale.sin() * 6.0,
+		-20.0,
+		1.0)
+}
+
+fn bottom_circle_offset(elap_time: f32) -> Vec4<f32> {
+	let fscale = 3.14159 * 2.0 / 5.0;
+	let elap_time_scale = elap_time * fscale;
+	Vec4::new(
+		elap_time_scale.cos() * 5.0,
+		-3.5,
+		elap_time_scale.sin() * 5.0 - 20.0,
+		1.0)
+}
+
+//fn gen_instance_list() -> 
+
+fn display(program: GLuint, vao1: GLuint, elap_time: f32) {
 	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
 	gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
 	gl::UseProgram(program);
+	let mod_cam_unif = get_uniform(program, "modelToCameraMatrix");
 
 	gl::BindVertexArray(vao1);
-	gl::Uniform3f(offset_unif, 0.0, 0.0, 0.50);
-	unsafe {
-		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-	}
+	let mut trans_mat: Mat4<f32> = na::one();
 
-	gl::Uniform3f(offset_unif, 0.0, 0.0, 0.5);
-	unsafe {
-		gl::DrawElementsBaseVertex(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null(), vertex_num as i32 / 2);
+	// loop through instances
+	for i in range(0, 3) {
+		let trans_vec = match i {
+			0 => stationary_offset(elap_time),
+			1 => oval_offset(elap_time),
+			_ => bottom_circle_offset(elap_time)
+		};
+
+		trans_mat.m41 = trans_vec.x;
+		trans_mat.m42 = trans_vec.y;
+		trans_mat.m43 = trans_vec.z;
+		trans_mat.m44 = trans_vec.w;
+
+		unsafe { gl::UniformMatrix4fv(mod_cam_unif, 1, gl::TRUE, mem::transmute(&trans_mat.m11)); }
+
+		unsafe {
+			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		}
 	}
 
 	gl::BindVertexArray(0);
@@ -292,10 +253,11 @@ fn main() {
 
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
-	let (program, vbo, ibo, vao1) = init();
-	let offset_unif = get_uniform(program, "offset");
+	let (program, vbo, ibo, vao1, mut cam_clip_m, frustum_scale) = init();
 
 	let mut depth_clamp = false;
+
+	//let instance_list = gen_instance_list();
 
 
     while !window.should_close() {
@@ -312,12 +274,12 @@ fn main() {
 					}
 					depth_clamp = !depth_clamp;
 				}
-				glfw::SizeEvent(w, h) => { resize(w, h, program); }
+				glfw::SizeEvent(w, h) => { resize(w, h, program, &mut cam_clip_m, frustum_scale); }
 				_ => {}
 			}
         }
 
-		display(program, vao1, offset_unif);
+		display(program, vao1, glfw.get_time() as f32);
 		window.swap_buffers();
     }
 
@@ -337,9 +299,16 @@ fn start(argc: int, argv: **u8) -> int {
 
 
 
-fn resize(w: i32, h: i32, program: GLuint) {
+fn resize(w: i32, h: i32, program: GLuint, cam_clip_m: &mut Mat4<f32>, frustum_scale: f32) {
 	println!("resize event: {} x {}", w, h);
-	set_perspective_mat(program, frustum_scale / ((w as GLfloat) / (h as GLfloat)), frustum_scale);
+	cam_clip_m.m11 = frustum_scale * (h as f32 / w as f32);
+	cam_clip_m.m22 = frustum_scale;
+
+	let cam_clip_unif = get_uniform(program, "cameraToClipMatrix");
+	gl::UseProgram(program);
+	unsafe { gl::UniformMatrix4fv(cam_clip_unif, 1, gl::TRUE, mem::transmute(&cam_clip_m.m11)); }
+	gl::UseProgram(0);
+
 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
 }
 
