@@ -6,7 +6,7 @@ use std::ptr;
 use std::str;
 
 
-pub fn load_file(file_src: &str) -> ~str {
+pub fn load_file(file_src: &str) -> StrBuf {
 	use std::io::File;
 
 	let path = Path::new(file_src);
@@ -24,7 +24,7 @@ pub fn load_shader_file(ty: GLenum, file_src: &str) -> GLuint {
 }
 
 //TODO: write file load logic using http://static.rust-lang.org/doc/master/std/io/fs/struct.File.html
-pub fn load_shader(ty: GLenum, src: &str) -> GLuint {
+pub fn load_shader(ty: GLenum, src: StrBuf) -> GLuint {
 	let shader = gl::CreateShader(ty);
 	unsafe {
 		// Attempt to compile the shader
