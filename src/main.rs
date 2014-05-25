@@ -21,7 +21,6 @@ extern crate native;
 
 use gl::types::*;
 use glfw::Context;
-use std::cast;
 use std::mem;
 use std::ptr;
 
@@ -197,13 +196,13 @@ fn init_vertex_buffer() -> (GLuint,GLuint) {
 	unsafe {
 		gl::GenBuffers(1, &mut vbo);
 		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
-		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, cast::transmute(&vertex_data[0]), gl::STATIC_DRAW);
+		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, mem::transmute(&vertex_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
 	unsafe {
 		gl::GenBuffers(1, &mut ibo);
 		gl::BindBuffer(gl::ARRAY_BUFFER, ibo);
-		gl::BufferData(gl::ARRAY_BUFFER, (index_data.len() * mem::size_of::<GLshort>()) as GLsizeiptr, cast::transmute(&index_data[0]), gl::STATIC_DRAW);
+		gl::BufferData(gl::ARRAY_BUFFER, (index_data.len() * mem::size_of::<GLshort>()) as GLsizeiptr, mem::transmute(&index_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
 	(vbo, ibo)
@@ -226,7 +225,7 @@ fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> GLuint {
 	gl::EnableVertexAttribArray(1);
 	unsafe {
 		gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, cast::transmute(color_data_offset));
+		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, mem::transmute(color_data_offset));
 	}
 	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
 
