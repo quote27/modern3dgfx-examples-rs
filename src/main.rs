@@ -30,8 +30,8 @@ use nalgebra::na;
 
 mod shaders;
 
-static GREEN_COLOR:[GLfloat, ..4]  = [0.75, 0.75, 1.0, 1.0];
-static BLUE_COLOR: [GLfloat, ..4]  = [0.0, 0.5, 0.0, 1.0];
+static GREEN_COLOR:[GLfloat, ..4]  = [0.0, 1.0, 0.0, 1.0];
+static BLUE_COLOR: [GLfloat, ..4]  = [0.0, 0.0, 1.0, 1.0];
 static RED_COLOR:  [GLfloat, ..4]  = [1.0, 0.0, 0.0, 1.0];
 //static GREY_COLOR: [GLfloat, ..4]  = [0.8, 0.8, 0.8, 1.0];
 static BROWN_COLOR:[GLfloat, ..4]  = [0.5, 0.5, 0.0, 1.0];
