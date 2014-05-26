@@ -175,6 +175,23 @@ fn init() -> (GLuint, GLuint, GLuint, GLuint, Mat4<f32>, f32) {
 	(program, vbo, ibo, vao1, cam_clip_m, frustum_scale)
 }
 
+struct Instance {
+	calc_offset: fn(elap_time: f32) -> Vec4<f32>,
+}
+impl Instance {
+	pub fn construct_matrix(&self, elap_time: f32) -> Mat4<f32> {
+		let mut m: Mat4<f32> = na::one();
+		let fco = self.calc_offset;
+		let vec = fco(elap_time);
+
+		m.m41 = vec.x;
+		m.m42 = vec.y;
+		m.m43 = vec.z;
+		m.m44 = vec.w;
+		m
+	}
+}
+
 fn stationary_offset(elap_time: f32) -> Vec4<f32> {
 	Vec4::new(0.0, 0.0, -20.0, 1.0)
 }
@@ -199,9 +216,15 @@ fn bottom_circle_offset(elap_time: f32) -> Vec4<f32> {
 		1.0)
 }
 
-//fn gen_instance_list() -> 
+fn gen_instance_list() -> [Instance, ..3] {
+	[
+		Instance {calc_offset: stationary_offset},
+		Instance {calc_offset: oval_offset},
+		Instance {calc_offset: bottom_circle_offset},
+	]
+}
 
-fn display(program: GLuint, vao1: GLuint, elap_time: f32) {
+fn display(program: GLuint, vao1: GLuint, elap_time: f32, inst_list: &[Instance]) {
 	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
 	gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
@@ -209,26 +232,12 @@ fn display(program: GLuint, vao1: GLuint, elap_time: f32) {
 	let mod_cam_unif = get_uniform(program, "modelToCameraMatrix");
 
 	gl::BindVertexArray(vao1);
-	let mut trans_mat: Mat4<f32> = na::one();
 
-	// loop through instances
-	for i in range(0, 3) {
-		let trans_vec = match i {
-			0 => stationary_offset(elap_time),
-			1 => oval_offset(elap_time),
-			_ => bottom_circle_offset(elap_time)
-		};
+	for i in inst_list.iter() {
+		let m = i.construct_matrix(elap_time);
 
-		trans_mat.m41 = trans_vec.x;
-		trans_mat.m42 = trans_vec.y;
-		trans_mat.m43 = trans_vec.z;
-		trans_mat.m44 = trans_vec.w;
-
-		unsafe { gl::UniformMatrix4fv(mod_cam_unif, 1, gl::TRUE, mem::transmute(&trans_mat.m11)); }
-
-		unsafe {
-			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-		}
+		unsafe { gl::UniformMatrix4fv(mod_cam_unif, 1, gl::TRUE, mem::transmute(&m)); }
+		unsafe { gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null()); }
 	}
 
 	gl::BindVertexArray(0);
@@ -257,7 +266,7 @@ fn main() {
 
 	let mut depth_clamp = false;
 
-	//let instance_list = gen_instance_list();
+	let instance_list = gen_instance_list();
 
 
     while !window.should_close() {
@@ -279,7 +288,7 @@ fn main() {
 			}
         }
 
-		display(program, vao1, glfw.get_time() as f32);
+		display(program, vao1, glfw.get_time() as f32, instance_list);
 		window.swap_buffers();
     }
 
