@@ -24,56 +24,113 @@ use gl::types::*;
 use glfw::Context;
 use std::mem;
 use std::ptr;
-use nalgebra::na::{Vec4, Mat4};
+use nalgebra::na::{Vec3, Mat4};
 use nalgebra::na;
 
 
 mod shaders;
 
-static GREEN_COLOR:[GLfloat, ..4]  = [0.0, 1.0, 0.0, 1.0];
-static BLUE_COLOR: [GLfloat, ..4]  = [0.0, 0.0, 1.0, 1.0];
-static RED_COLOR:  [GLfloat, ..4]  = [1.0, 0.0, 0.0, 1.0];
-//static GREY_COLOR: [GLfloat, ..4]  = [0.8, 0.8, 0.8, 1.0];
-static BROWN_COLOR:[GLfloat, ..4]  = [0.5, 0.5, 0.0, 1.0];
+static GREEN_COLOR:   [GLfloat, ..4]  = [0.0, 1.0, 0.0, 1.0];
+static BLUE_COLOR:    [GLfloat, ..4]  = [0.0, 0.0, 1.0, 1.0];
+static RED_COLOR:     [GLfloat, ..4]  = [1.0, 0.0, 0.0, 1.0];
+static YELLOW_COLOR:  [GLfloat, ..4]  = [1.0, 1.0, 0.0, 1.0];
+static CYAN_COLOR:    [GLfloat, ..4]  = [0.0, 1.0, 1.0, 1.0];
+static MAGENTA_COLOR: [GLfloat, ..4]  = [1.0, 0.0, 1.0, 1.0];
 
-static vertex_num: uint = 8;
-static vertex_data:[GLfloat, ..56] = [
-	//Object 1 positions
+static vertex_num: uint = 24;
+static vertex_data:[GLfloat, ..168] = [
+	//Front
 	 1.0,  1.0,  1.0,
-	-1.0, -1.0,  1.0,
-	-1.0,  1.0, -1.0,
-	 1.0, -1.0, -1.0,
-
-	-1.0, -1.0, -1.0,
-	 1.0,  1.0, -1.0,
 	 1.0, -1.0,  1.0,
+	-1.0, -1.0,  1.0,
 	-1.0,  1.0,  1.0,
 
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	//Top
+	 1.0,  1.0,  1.0,
+	-1.0,  1.0,  1.0,
+	-1.0,  1.0, -1.0,
+	 1.0,  1.0, -1.0,
 
+	//Let
+	 1.0,  1.0,  1.0,
+	 1.0,  1.0, -1.0,
+	 1.0, -1.0, -1.0,
+	 1.0, -1.0,  1.0,
+
+	//Back
+	 1.0,  1.0, -1.0,
+	-1.0,  1.0, -1.0,
+	-1.0, -1.0, -1.0,
+	 1.0, -1.0, -1.0,
+
+	//Bottom
+	 1.0, -1.0,  1.0,
+	 1.0, -1.0, -1.0,
+	-1.0, -1.0, -1.0,
+	-1.0, -1.0,  1.0,
+
+	//Right
+	-1.0,  1.0,  1.0,
+	-1.0, -1.0,  1.0,
+	-1.0, -1.0, -1.0,
+	-1.0,  1.0, -1.0,
+
+
+	//colors
 	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+
 	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+
 	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	BROWN_COLOR[0], BROWN_COLOR[1], BROWN_COLOR[2], BROWN_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+
+	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+
+	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+
+	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
 ];
 
-static index_data: [GLshort, ..24] = [
+static index_data: [GLshort, ..36] = [
 	0, 1, 2,
-	1, 0, 3,
 	2, 3, 0,
-	3, 2, 1,
 
-	5, 4, 6,
-	4, 5, 7,
-	7, 6, 4,
-	6, 7, 5,
+	4, 5, 6,
+	6, 7, 4,
+
+	8, 9, 10,
+	10, 11, 8,
+
+	12, 13, 14,
+	14, 15, 12,
+
+	16, 17, 18,
+	18, 19, 16,
+
+	20, 21, 22,
+	22, 23, 20,
 ];
 
 fn calc_frustum_scale(fov_deg: f32) -> f32 {
-	// one liner: 1.0 / (fov_deg.to_radians() / 2.0).tan()
+	// one liner:
+	// 1.0 / (fov_deg.to_radians() / 2.0).tan()
 	let deg_rad = 3.14159 * 2.0 / 360.0;
 	let fov_rad = fov_deg * deg_rad;
 	1.0 / (fov_rad / 2.0).tan()
@@ -83,69 +140,145 @@ fn get_uniform(program: GLuint, name: &str) -> GLint {
 	unsafe { gl::GetUniformLocation(program, name.with_c_str(|ptr| ptr)) }
 	//alternative: unsafe { name.with_c_str(|ptr| gl::GetUniformLocation(program, ptr)); }
 }
+fn get_attrib_loc(program: GLuint, name: &str) -> GLuint {
+	unsafe { gl::GetAttribLocation(program, name.with_c_str(|ptr| ptr)) as GLuint }
+	//alternative: unsafe { name.with_c_str(|ptr| gl::GetUniformLocation(program, ptr)); }
+}
+
+struct GLState {
+	program: GLuint,
+	pos_attr: GLuint,
+	color_attr: GLuint,
+	mod_cam_unif: GLint,
+	cam_clip_unif: GLint,
+
+	vbo: GLuint,
+	ibo: GLuint,
+	vao: GLuint,
+
+	cam_clip_m: Mat4<f32>,
+	frustum_scale: f32,
+}
+impl GLState {
+	pub fn new() -> GLState {
+		GLState {
+			program: 0,
+			pos_attr: 0,
+			color_attr: 0,
+			mod_cam_unif: 0,
+			cam_clip_unif: 0,
+
+			vbo: 0,
+			ibo: 0,
+			vao: 0,
+
+			cam_clip_m: na::zero(),
+			frustum_scale: 0.0,
+		}
+	}
+}
+
+// matrix format - row major memory order
+// initial memory order
+// m11 m21 m31 m41
+// m12 m22 m32 m42
+// m13 m23 m33 m43
+// m14 m24 m34 m44
+//
+//transposed logically
+// m11 m12 m13 m14
+// m22 m22 m23 m24
+// m33 m32 m33 m34
+// m44 m42 m43 m44
 
 
-fn init_program() -> GLuint {
+
+
+fn print_mat(m: &Mat4<f32>) {
+	println!("{: >8.2} {: >8.2} {: >8.2} {: >8.2}", m.m11, m.m21, m.m31, m.m41);
+	println!("{: >8.2} {: >8.2} {: >8.2} {: >8.2}", m.m12, m.m22, m.m32, m.m42);
+	println!("{: >8.2} {: >8.2} {: >8.2} {: >8.2}", m.m13, m.m23, m.m33, m.m43);
+	println!("{: >8.2} {: >8.2} {: >8.2} {: >8.2}", m.m14, m.m24, m.m34, m.m44);
+}
+
+
+fn init_program(state: &mut GLState) {
 	println!("== init program ==");
 	let mut shader_list = Vec::new();
 	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/PosColorLocalTransform.vert"));
     shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/ColorPassthrough.frag"));
-    let program = shaders::create_program(&shader_list);
+    state.program = shaders::create_program(&shader_list);
 
-	for s in shader_list.iter() {
-		gl::DeleteShader(*s);
-	}
-	program
+	//not being deletd anymore in examples
+	//for s in shader_list.iter() {
+	//	gl::DeleteShader(*s);
+	//}
+
+	state.pos_attr = get_attrib_loc(state.program, "position");
+	state.color_attr = get_attrib_loc(state.program, "color");
+
+	state.mod_cam_unif = get_uniform(state.program, "modelToCameraMatrix");
+	state.cam_clip_unif = get_uniform(state.program, "cameraToClipMatrix");
+
+	state.frustum_scale = calc_frustum_scale(45.0);
+	let (znear, zfar) = (1.0, 100.0);
+	state.cam_clip_m = na::zero();
+
+// matrix format
+// m11 m21 m31 m41
+// m12 m22 m32 m42
+// m13 m23 m33 m43
+// m14 m24 m34 m44
+	state.cam_clip_m.m11 = state.frustum_scale;
+	state.cam_clip_m.m22 = state.frustum_scale;
+	state.cam_clip_m.m33 = (zfar + znear) / (znear - zfar);
+	state.cam_clip_m.m34 = -1.0;
+	state.cam_clip_m.m43 = (2.0 * zfar * znear) / (znear - zfar);
+
+	print_mat(&state.cam_clip_m);
+
+	gl::UseProgram(state.program);
+	unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::TRUE, mem::transmute(&state.cam_clip_m.m11)); }
+	gl::UseProgram(0);
 }
 
-fn init_vertex_buffer() -> (GLuint,GLuint) {
-	let mut vbo: GLuint = 0;
-	let mut ibo: GLuint = 0;
+fn init_vertex_array_obj(state: &mut GLState) {
 	unsafe {
-		gl::GenBuffers(1, &mut vbo);
-		gl::BindBuffer(gl::ARRAY_BUFFER, vbo);
+		gl::GenBuffers(1, &mut state.vbo);
+		gl::BindBuffer(gl::ARRAY_BUFFER, state.vbo);
 		gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, mem::transmute(&vertex_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
 	unsafe {
-		gl::GenBuffers(1, &mut ibo);
-		gl::BindBuffer(gl::ARRAY_BUFFER, ibo);
+		gl::GenBuffers(1, &mut state.ibo);
+		gl::BindBuffer(gl::ARRAY_BUFFER, state.ibo);
 		gl::BufferData(gl::ARRAY_BUFFER, (index_data.len() * mem::size_of::<GLshort>()) as GLsizeiptr, mem::transmute(&index_data[0]), gl::STATIC_DRAW);
 		gl::BindBuffer(gl::ARRAY_BUFFER, 0);
 	}
-	(vbo, ibo)
-}
 
-fn init_vertex_array_obj(vbo: GLuint, ibo: GLuint) -> GLuint {
-	let mut vao1 = 0;
-	let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
-
-	//bind vertex data
 	unsafe{
-		gl::GenVertexArrays(1, &mut vao1);
+		gl::GenVertexArrays(1, &mut state.vao);
 	}
-	gl::BindVertexArray(vao1);
+	gl::BindVertexArray(state.vao);
 
-
-	gl::BindBuffer(gl::ARRAY_BUFFER, vbo); 
-
-	gl::EnableVertexAttribArray(0);
-	gl::EnableVertexAttribArray(1);
+	let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
+	gl::BindBuffer(gl::ARRAY_BUFFER, state.vbo); 
+	gl::EnableVertexAttribArray(state.pos_attr);
+	gl::EnableVertexAttribArray(state.color_attr);
 	unsafe {
-		gl::VertexAttribPointer(0, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-		gl::VertexAttribPointer(1, 4, gl::FLOAT, gl::FALSE, 0, mem::transmute(color_data_offset));
+		gl::VertexAttribPointer(state.pos_attr, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
+		gl::VertexAttribPointer(state.color_attr, 4, gl::FLOAT, gl::FALSE, 0, mem::transmute(color_data_offset));
 	}
-	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, ibo);
+	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, state.ibo);
 
-	gl::BindVertexArray(0); //unbind
-
-	vao1
+	gl::BindVertexArray(0);
 }
 
-fn init() -> (GLuint, GLuint, GLuint, GLuint, Mat4<f32>, f32) {
-	let program = init_program();
-	let (vbo, ibo) = init_vertex_buffer();
-	let vao1 = init_vertex_array_obj(vbo, ibo);
+fn init() -> GLState {
+	let mut state: GLState = GLState::new();
+
+	init_program(&mut state);
+	init_vertex_array_obj(&mut state);
 
 	gl::Enable(gl::CULL_FACE);
 	gl::CullFace(gl::BACK);
@@ -156,92 +289,432 @@ fn init() -> (GLuint, GLuint, GLuint, GLuint, Mat4<f32>, f32) {
 	gl::DepthFunc(gl::LEQUAL);
 	gl::DepthRange(0.0, 1.0);
 
-	//TODO: camera to clip matrix
-	let frustum_scale = calc_frustum_scale(45.0);
-	let (znear, zfar) = (1.0, 45.0);
-	let mut cam_clip_m: Mat4<f32> = na::zero();
-
-	cam_clip_m.m11 = frustum_scale;
-	cam_clip_m.m22 = frustum_scale;
-	cam_clip_m.m33 = (zfar + znear) / (znear - zfar);
-	cam_clip_m.m34 = -1.0;
-	cam_clip_m.m43 = (2.0 * zfar * znear) / (znear - zfar);
-
-	let cam_clip_unif = get_uniform(program, "cameraToClipMatrix");
-	gl::UseProgram(program);
-	unsafe { gl::UniformMatrix4fv(cam_clip_unif, 1, gl::TRUE, mem::transmute(&cam_clip_m.m11)); }
-	gl::UseProgram(0);
-
-	(program, vbo, ibo, vao1, cam_clip_m, frustum_scale)
+	state
 }
 
-struct Instance {
-	calc_offset: fn(elap_time: f32) -> Vec4<f32>,
-}
-impl Instance {
-	pub fn construct_matrix(&self, elap_time: f32) -> Mat4<f32> {
-		let mut m: Mat4<f32> = na::one();
-		let fco = self.calc_offset;
-		let vec = fco(elap_time);
 
-		m.m41 = vec.x;
-		m.m42 = vec.y;
-		m.m43 = vec.z;
-		m.m44 = vec.w;
-		m
+// some math functions
+//
+#[inline]
+fn clamp(v: f32, min: f32, max: f32) -> f32 {
+	if v < min {
+		min
+	} else if v > max {
+		max
+	} else {
+		v
+	}
+	//match v {
+	//	v if v < min => min,
+	//	v if v > max => max,
+	//	_            => v
+	//}
+}
+
+//#[inline]
+//fn gl_mix(x: f32, y: f32, a: f32) -> f32 {
+//	x * (1.0 - a) + y * a
+//}
+
+#[inline]
+fn fmodf(a: f32, n: f32) -> f32 {
+	a - (n * ((a/n) as i32) as f32)
+}
+
+
+//fn calc_lerp_factor(elap_time: f32, loop_dur: f32) -> f32 {
+//	let mut fval = fmodf(elap_time, loop_dur) / loop_dur;
+//	// returns 0.0 to 1.0
+//	if fval > 0.5 {
+//		fval = 1.0 - fval;
+//	}
+//	fval * 2.0
+//}
+
+#[inline]
+fn deg_to_rad(d: f32) -> f32 {
+	let deg_rad = 3.14159 * 2.0 / 360.0;
+	d * deg_rad
+}
+
+
+// matrix format
+// m11 m21 m31 m41
+// m12 m22 m32 m42
+// m13 m23 m33 m43
+// m14 m24 m34 m44
+
+
+
+//rotate helpers
+fn rot_x(ang: f32) -> Mat4<f32> {
+	//let rad = ang.to_radians();
+	let rad = deg_to_rad(ang);
+	let (cos, sin) = (rad.cos(), rad.sin());
+
+	let mut m: Mat4<f32> = na::one();
+	m.m22 = cos; m.m32 = -sin;
+	m.m23 = sin; m.m33 = cos;
+	m
+}
+
+fn rot_y(ang: f32) -> Mat4<f32> {
+	//let rad = ang.to_radians();
+	let rad = deg_to_rad(ang);
+	let (cos, sin) = (rad.cos(), rad.sin());
+
+	let mut m: Mat4<f32> = na::one();
+	m.m11 = cos; m.m31 = sin;
+	m.m13 = -sin; m.m33 = cos;
+	m
+}
+
+fn rot_z(ang: f32) -> Mat4<f32> {
+	//let rad = ang.to_radians();
+	let rad = deg_to_rad(ang);
+	let (cos, sin) = (rad.cos(), rad.sin());
+
+	let mut m: Mat4<f32> = na::one();
+	m.m11 = cos; m.m21 = -sin;
+	m.m12 = sin; m.m22 = cos;
+	m
+}
+
+// matrix stack
+//
+struct MatrixStack {
+	cm: Mat4<f32>,
+	ms: Vec<Mat4<f32>>,
+}
+impl MatrixStack {
+	fn new() -> MatrixStack {
+		MatrixStack {
+			cm: na::one(),
+			ms: Vec::new(),
+		}
+	}
+	//reference signature version
+	//pub fn top<'a>(&'a self) -> &'a Mat4<f32> { &(self.cm) }
+	pub fn top(&self) -> Mat4<f32> { self.cm }
+	pub fn rot_x(&mut self, ang: f32) {
+		self.cm = self.cm * ::rot_x(ang);
+	}
+	pub fn rot_y(&mut self, ang: f32) {
+		self.cm = self.cm * ::rot_y(ang);
+	}
+	pub fn rot_z(&mut self, ang: f32) {
+		self.cm = self.cm * ::rot_z(ang);
+	}
+	pub fn scale(&mut self, sv: Vec3<f32>) {
+		let mut sm: Mat4<f32> = na::one();
+		sm.m11 = sv.x;
+		sm.m22 = sv.y;
+		sm.m33 = sv.z;
+		self.cm = self.cm * sm;
+	}
+	pub fn trans(&mut self, tv: Vec3<f32>) {
+		let mut tm: Mat4<f32> = na::one();
+		tm.m41 = tv.x;
+		tm.m42 = tv.y;
+		tm.m43 = tv.z;
+		self.cm = self.cm * tm;
+	}
+	pub fn push(&mut self) {
+		let m = self.cm.clone();
+		self.ms.push(m);
+	}
+	pub fn pop(&mut self) {
+		self.cm = match self.ms.pop() {
+			Some(x) => x,
+			None => na::one()
+		};
 	}
 }
 
-fn stationary_offset(elap_time: f32) -> Vec4<f32> {
-	Vec4::new(0.0, 0.0, -20.0, 1.0)
+
+struct Hierarchy {
+	pos_base: Vec3<f32>,
+	ang_base: f32,
+
+	pos_base_left: Vec3<f32>,
+	pos_base_right: Vec3<f32>,
+	scale_base_z: f32,
+
+	ang_upperarm: f32,
+	size_upperarm: f32,
+
+	pos_lowerarm: Vec3<f32>,
+	ang_lowerarm: f32,
+	len_lowerarm: f32,
+	width_lowerarm: f32,
+
+	pos_wrist: Vec3<f32>,
+	ang_wrist_roll: f32,
+	ang_wrist_pitch: f32,
+	len_wrist: f32,
+	width_wrist: f32,
+
+	pos_left_finger: Vec3<f32>,
+	pos_right_finger: Vec3<f32>,
+	ang_finger_open: f32,
+	len_finger: f32,
+	width_finger: f32,
+	ang_lower_finger: f32,
+
+	ang_inc_standard: f32,
+	ang_inc_small: f32,
+}
+impl Hierarchy {
+
+	pub fn new() -> Hierarchy {
+		Hierarchy {
+			pos_base:		Vec3::new(3.0, -5.0, -40.0),
+			ang_base:		-45.0,
+			pos_base_left:	Vec3::new(2.0, 0.0, 0.0),
+			pos_base_right:	Vec3::new(-2.0, 0.0, 0.0),
+			scale_base_z:	3.0,
+			ang_upperarm:	-33.75,
+			size_upperarm:	9.0,
+			pos_lowerarm:	Vec3::new(0.0, 0.0, 8.0),
+			ang_lowerarm:	146.25,
+			len_lowerarm:	5.0,
+			width_lowerarm:	1.5,
+			pos_wrist:		Vec3::new(0.0, 0.0, 5.0),
+			ang_wrist_roll:	0.0,
+			ang_wrist_pitch:67.5,
+			len_wrist:		2.0,
+			width_wrist:	2.0,
+			pos_left_finger:Vec3::new(1.0, 0.0, 1.0),
+			pos_right_finger:Vec3::new(-1.0, 0.0, 1.0),
+			ang_finger_open:180.0,
+			len_finger:		2.0,
+			width_finger:	0.5,
+			ang_lower_finger:45.0,
+			ang_inc_standard:11.25,
+			ang_inc_small: 	9.0,
+		}
+	}
+
+	pub fn draw(&self, state: &GLState) {
+		//model to camera matrix stack
+		let mut mcs = MatrixStack::new();
+
+		gl::UseProgram(state.program);
+		gl::BindVertexArray(state.vao);
+
+		let mut m: Mat4<f32> = na::one();
+		m.m41 = 1.0;
+		m.m42 = 2.0;
+		m.m43 = -20.0;
+
+//		println!("single mat");
+//		print_mat(&m);
+
+
+		unsafe{
+			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top().m11));
+			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		}
+
+		mcs.trans(self.pos_base);
+//		println!("mcs topp");
+//		print_mat(&mcs.top());
+//		mcs.rot_y(self.ang_base);
+
+//		{ // left base
+//			mcs.push();
+//			mcs.trans(self.pos_base_left);
+//			mcs.scale(Vec3::new(1.0, 1.0, self.scale_base_z));
+//			unsafe{
+//				gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top().m11));
+//				gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+//			}
+//			mcs.pop();
+//		}
+
+//		{ // right base
+//			mcs.push();
+//			mcs.trans(self.pos_base_right);
+//			mcs.scale(Vec3::new(1.0, 1.0, self.scale_base_z));
+//			unsafe{
+//				gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top().m11));
+//				gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+//			}
+//			mcs.pop();
+//		}
+
+		//self.draw_upperarm(&mut mcs, state);
+
+		gl::BindVertexArray(0);
+		gl::UseProgram(0);
+	}
+
+	fn draw_fingers(&self, mcs: &mut MatrixStack, state: &GLState) {
+		// draw left finger
+		mcs.push();
+		mcs.trans(self.pos_left_finger);
+		mcs.rot_y(self.ang_finger_open);
+
+		mcs.push();
+		mcs.trans(Vec3::new(0.0, 0.0, self.len_finger / 2.0));
+		mcs.scale(Vec3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+		unsafe {
+		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		}
+		mcs.pop();
+
+		{ // draw left lower finger
+			mcs.push();
+			mcs.trans(self.pos_left_finger);
+			mcs.rot_y(-self.ang_lower_finger);
+
+			mcs.push();
+			mcs.trans(Vec3::new(0.0, 0.0, self.len_finger / 2.0));
+			mcs.scale(Vec3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+			unsafe {
+			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+			}
+			mcs.pop();
+
+			mcs.pop();
+		}
+
+		mcs.pop();
+
+		// draw right finger
+		mcs.push();
+		mcs.trans(self.pos_right_finger);
+		mcs.rot_y(self.ang_finger_open);
+
+		mcs.push();
+		mcs.trans(Vec3::new(0.0, 0.0, self.len_finger / 2.0));
+		mcs.scale(Vec3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+		unsafe {
+		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		}
+		mcs.pop();
+
+		{ // draw right lower finger
+			mcs.push();
+			mcs.trans(self.pos_right_finger);
+			mcs.rot_y(self.ang_lower_finger);
+
+			mcs.push();
+			mcs.trans(Vec3::new(0.0, 0.0, self.len_finger / 2.0));
+			mcs.scale(Vec3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+			unsafe {
+			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+			}
+			mcs.pop();
+
+			mcs.pop();
+		}
+
+		mcs.pop();
+	}
+
+	fn draw_wrist(&self, mcs: &mut MatrixStack, state: &GLState) {
+		mcs.push();
+		mcs.trans(self.pos_wrist);
+		mcs.rot_z(self.ang_wrist_roll);
+		mcs.rot_x(self.ang_wrist_pitch);
+
+		mcs.push();
+		mcs.scale(Vec3::new(self.width_wrist / 2.0, self.width_wrist / 2.0, self.len_wrist / 2.0));
+		unsafe {
+		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		}
+		mcs.pop();
+
+		self.draw_fingers(mcs, state);
+		mcs.pop();
+	}
+
+	fn draw_lowerarm(&self, mcs: &mut MatrixStack, state: &GLState) {
+		mcs.push();
+		mcs.trans(self.pos_lowerarm);
+		mcs.rot_x(self.ang_lowerarm);
+
+		mcs.push();
+		mcs.trans(Vec3::new(0.0, 0.0, self.len_lowerarm / 2.0));
+		mcs.scale(Vec3::new(self.width_lowerarm / 2.0, self.width_lowerarm / 2.0, self.len_lowerarm / 2.0));
+		unsafe {
+		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+		}
+		mcs.pop();
+
+		self.draw_wrist(mcs, state);
+		mcs.pop();
+	}
+
+	fn draw_upperarm(&self, mcs: &mut MatrixStack, state: &GLState) {
+		mcs.push();
+		mcs.rot_x(self.ang_upperarm);
+
+		{
+			mcs.push();
+			mcs.trans(Vec3::new(0.0, 0.0, self.size_upperarm / 2.0 - 1.0));
+			mcs.scale(Vec3::new(1.0, 1.0, self.size_upperarm / 2.0));
+			unsafe {
+			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::TRUE, mem::transmute(&mcs.top()));
+			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+			}
+			mcs.pop();
+		}
+
+		self.draw_lowerarm(mcs, state);
+		mcs.pop();
+	}
+
+	pub fn adj_base(&mut self, inc: bool) {
+		self.ang_base += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+		self.ang_base = fmodf(self.ang_base, 360.0);
+	}
+	pub fn adj_upperarm(&mut self, inc: bool) {
+		self.ang_upperarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+		self.ang_upperarm = clamp(self.ang_upperarm, -50.0, 0.0);
+	}
+	pub fn adj_lowerarm(&mut self, inc: bool) {
+		self.ang_lowerarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+		self.ang_lowerarm = clamp(self.ang_lowerarm, 0.0, 146.25);
+	}
+	pub fn adj_wrist_pitch(&mut self, inc: bool) {
+		self.ang_wrist_pitch += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+		self.ang_wrist_pitch = clamp(self.ang_wrist_pitch, 0.0, 90.0);
+	}
+	pub fn adj_wrist_roll(&mut self, inc: bool) {
+		self.ang_wrist_roll += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+		self.ang_wrist_roll = fmodf(self.ang_wrist_roll, 360.0);
+	}
+	pub fn adj_finger_open(&mut self, inc: bool) {
+		self.ang_finger_open += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+		self.ang_finger_open = clamp(self.ang_finger_open, 9.0, 180.0);
+	}
+
+	pub fn write_pose(&self) {
+		println!("ang_base:\t{}", self.ang_base);
+		println!("ang_upperarm:\t{}", self.ang_upperarm);
+		println!("ang_lowerarm:\t{}", self.ang_lowerarm);
+		println!("ang_wrist_pitch:\t{}", self.ang_wrist_pitch);
+		println!("ang_wrist_roll:\t{}", self.ang_wrist_roll);
+		println!("ang_finger_open:\t{}", self.ang_finger_open);
+		println!("");
+	}
 }
 
-fn oval_offset(elap_time: f32) -> Vec4<f32> {
-	let fscale = 3.14159 * 2.0 / 5.0;
-	let elap_time_scale = elap_time * fscale;
-	Vec4::new(
-		elap_time_scale.cos() * 4.0,
-		elap_time_scale.sin() * 6.0,
-		-20.0,
-		1.0)
-}
 
-fn bottom_circle_offset(elap_time: f32) -> Vec4<f32> {
-	let fscale = 3.14159 * 2.0 / 5.0;
-	let elap_time_scale = elap_time * fscale;
-	Vec4::new(
-		elap_time_scale.cos() * 5.0,
-		-3.5,
-		elap_time_scale.sin() * 5.0 - 20.0,
-		1.0)
-}
-
-fn gen_instance_list() -> [Instance, ..3] {
-	[
-		Instance {calc_offset: stationary_offset},
-		Instance {calc_offset: oval_offset},
-		Instance {calc_offset: bottom_circle_offset},
-	]
-}
-
-fn display(program: GLuint, vao1: GLuint, elap_time: f32, inst_list: &[Instance]) {
+fn display(state: &GLState, robot: &Hierarchy) {
 	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
+	gl::ClearDepth(1.0);
 	gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-	gl::UseProgram(program);
-	let mod_cam_unif = get_uniform(program, "modelToCameraMatrix");
-
-	gl::BindVertexArray(vao1);
-
-	for i in inst_list.iter() {
-		let m = i.construct_matrix(elap_time);
-
-		unsafe { gl::UniformMatrix4fv(mod_cam_unif, 1, gl::TRUE, mem::transmute(&m)); }
-		unsafe { gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null()); }
-	}
-
-	gl::BindVertexArray(0);
-	gl::UseProgram(0);
+	robot.draw(state);
 }
 
 fn main() {
@@ -262,43 +735,79 @@ fn main() {
 
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
-	let (program, vbo, ibo, vao1, mut cam_clip_m, frustum_scale) = init();
+	let mut state = init();
+	let mut robot = Hierarchy::new();
 
 	let mut depth_clamp = false;
 
-	let instance_list = gen_instance_list();
+
+	let mut ms = MatrixStack::new();
+	println!("empty stack");
+	print_mat(&ms.top());
+
+	ms.trans(robot.pos_base);
+	println!("trans robot base");
+	print_mat(&ms.top());
+
+	ms.push();
+	println!("push stack");
+	print_mat(&ms.top());
+
+	ms.trans(robot.pos_base_left);
+	println!("trans pos base left");
+	print_mat(&ms.top());
+
+	ms.scale(Vec3::new(1.0, 1.0, robot.scale_base_z));
+	println!("scale base z");
+	print_mat(&ms.top());
+
+	ms.trans(Vec3::new(5.0, 5.0, 5.0));
+	println!("trans post scale 5,5,5");
+	print_mat(&ms.top());
 
 
-    while !window.should_close() {
-        glfw.poll_events();
-        for (_, event) in glfw::flush_messages(&events) {
-			match event {
-				glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => { window.set_should_close(true) }
-				glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _)      => { window.set_should_close(true) }
-				glfw::KeyEvent(glfw::KeyD, _, glfw::Press, _)      => {
-					if depth_clamp {
-						gl::Disable(gl::DEPTH_CLAMP);
-					} else {
-						gl::Enable(gl::DEPTH_CLAMP);
-					}
-					depth_clamp = !depth_clamp;
-				}
-				glfw::SizeEvent(w, h) => { resize(w, h, program, &mut cam_clip_m, frustum_scale); }
-				_ => {}
-			}
-        }
+	ms.pop();
+	println!("pop");
+	print_mat(&ms.top());
 
-		display(program, vao1, glfw.get_time() as f32, instance_list);
-		window.swap_buffers();
-    }
 
-    // Cleanup
-    gl::DeleteProgram(program);
-    unsafe {
-        gl::DeleteBuffers(1, &vbo);
-        gl::DeleteBuffers(1, &ibo);
-        gl::DeleteVertexArrays(1, &vao1);
-    }
+
+
+
+
+
+
+
+//    while !window.should_close() {
+//        glfw.poll_events();
+//        for (_, event) in glfw::flush_messages(&events) {
+//			match event {
+//				glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => { window.set_should_close(true) }
+//				glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _)      => { window.set_should_close(true) }
+//				glfw::KeyEvent(glfw::KeyD, _, glfw::Press, _)      => {
+//					if depth_clamp {
+//						gl::Disable(gl::DEPTH_CLAMP);
+//					} else {
+//						gl::Enable(gl::DEPTH_CLAMP);
+//					}
+//					depth_clamp = !depth_clamp;
+//				}
+//				glfw::SizeEvent(w, h) => { resize(w, h, &mut state); }
+//				_ => { robot_kb(&mut robot, event) }
+//			}
+//        }
+//
+//		display(&state, &robot);
+//		window.swap_buffers();
+//    }
+//
+//    // Cleanup
+//    gl::DeleteProgram(state.program);
+//    unsafe {
+//        gl::DeleteBuffers(1, &state.vbo);
+//        gl::DeleteBuffers(1, &state.ibo);
+//        gl::DeleteVertexArrays(1, &state.vao);
+//    }
 }
 
 #[start]
@@ -306,16 +815,40 @@ fn start(argc: int, argv: **u8) -> int {
     native::start(argc, argv, main)
 }
 
+// TODO:
+// converting the keyboard requests to match rust
+// all that's left is to rename the functions like AdjBase -> adj_base
+//
+// next need to compare the hierarchy system / object
 
 
-fn resize(w: i32, h: i32, program: GLuint, cam_clip_m: &mut Mat4<f32>, frustum_scale: f32) {
+fn robot_kb(robot: &mut Hierarchy, event: glfw::WindowEvent) {
+	match event {
+	glfw::KeyEvent(glfw::KeyA, _, glfw::Press, _) => { robot.adj_base(true)		    }
+	glfw::KeyEvent(glfw::KeyD, _, glfw::Press, _) => { robot.adj_base(false)        }
+	glfw::KeyEvent(glfw::KeyW, _, glfw::Press, _) => { robot.adj_upperarm(false)    }
+	glfw::KeyEvent(glfw::KeyS, _, glfw::Press, _) => { robot.adj_upperarm(true)     }
+	glfw::KeyEvent(glfw::KeyR, _, glfw::Press, _) => { robot.adj_lowerarm(false)    }
+	glfw::KeyEvent(glfw::KeyF, _, glfw::Press, _) => { robot.adj_lowerarm(true)     }
+	glfw::KeyEvent(glfw::KeyT, _, glfw::Press, _) => { robot.adj_wrist_pitch(false) }
+	glfw::KeyEvent(glfw::KeyG, _, glfw::Press, _) => { robot.adj_wrist_pitch(true)  }
+	glfw::KeyEvent(glfw::KeyZ, _, glfw::Press, _) => { robot.adj_wrist_roll(true)   }
+	glfw::KeyEvent(glfw::KeyC, _, glfw::Press, _) => { robot.adj_wrist_roll(false)  }
+	glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => { robot.adj_finger_open(true)  }
+	glfw::KeyEvent(glfw::KeyE, _, glfw::Press, _) => { robot.adj_finger_open(false) }
+	glfw::KeyEvent(glfw::KeyP, _, glfw::Press, _) => { robot.write_pose()           }
+	_ => { }
+	}
+}
+
+
+fn resize(w: i32, h: i32, state: &mut GLState) {
 	println!("resize event: {} x {}", w, h);
-	cam_clip_m.m11 = frustum_scale * (h as f32 / w as f32);
-	cam_clip_m.m22 = frustum_scale;
+	state.cam_clip_m.m11 = state.frustum_scale * (h as f32 / w as f32);
+	state.cam_clip_m.m22 = state.frustum_scale;
 
-	let cam_clip_unif = get_uniform(program, "cameraToClipMatrix");
-	gl::UseProgram(program);
-	unsafe { gl::UniformMatrix4fv(cam_clip_unif, 1, gl::TRUE, mem::transmute(&cam_clip_m.m11)); }
+	gl::UseProgram(state.program);
+	unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::TRUE, mem::transmute(&state.cam_clip_m.m11)); }
 	gl::UseProgram(0);
 
 	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
