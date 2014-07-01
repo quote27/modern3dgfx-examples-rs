@@ -1,0 +1,16 @@
+[package]
+name = "modern3dgfx-examples-rs"
+version = "0.0.0"
+authors = [ "quote <quote@lv0.io>" ]
+
+[[bin]]
+name = "main"
+
+[dependencies.gl]
+git = "https://github.com/bjz/gl-rs.git"
+
+[dependencies.glfw]
+git = "https://github.com/bjz/glfw-rs.git"
+
+[dependencies.nalgebra]
+git = "https://github.com/sebcrozet/nalgebra.git"

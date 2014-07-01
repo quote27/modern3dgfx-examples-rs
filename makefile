@@ -34,7 +34,7 @@ SOURCE_FILES = $(shell test -e src/ && find src -type f)
 
 COMPILER = rustc
 
-LIBS = -Llib/glfw-rs/lib -Llib/gl-rs/lib -Llib/nalgebra/lib
+LIBS = -Ltarget/deps
 
 # For release:
   COMPILER_FLAGS = -O

@@ -1,13 +1,16 @@
-.DS_Store
-/bin/
-/doc/
-/target/
-/examples/
-/.rust
-rusti.sh
-.travis.yml
-cargo-lite.conf
-.symlink-info
-*.swp
+# from github/gitignore/Rust.gitignore
+*.o
+*.so
+*.rlib
+*.dll
+*.exe
 
-Cargo.toml
+# from rust-lang/cargo/.gitignore
+target
+.cargo
+
+# others
+.DS_store
+*.swp
+*~
+shaders/

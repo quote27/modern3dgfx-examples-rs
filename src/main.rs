@@ -29,6 +29,7 @@ use nalgebra::na;
 
 
 mod shaders;
+mod mesh;
 
 static GREEN_COLOR:   [GLfloat, ..4]  = [0.0, 1.0, 0.0, 1.0];
 static BLUE_COLOR:    [GLfloat, ..4]  = [0.0, 0.0, 1.0, 1.0];
@@ -775,6 +776,11 @@ fn start(argc: int, argv: **u8) -> int {
 }
 
 fn main() {
+
+	//let m = mesh::Mesh::new("s/mesh/UnitCubeTint.xml");
+
+
+
     let glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
     // Choose a GL profile that is compatible with OS X 10.7+ -- from example code

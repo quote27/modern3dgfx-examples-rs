@@ -6,13 +6,13 @@ use std::ptr;
 use std::str;
 
 
-pub fn load_file(file_src: &str) -> StrBuf {
+pub fn load_file(file_src: &str) -> String {
 	use std::io::File;
 
 	let path = Path::new(file_src);
 	let mut f = File::open(&path);
 
-	let dat = f.read_to_str().ok().expect(format!("unable to open {} file", file_src));
+	let dat = f.read_to_str().ok().expect(format!("unable to open {} file", file_src).as_slice());
 
 	println!("reading {0} file:\n{1}\n---", file_src, dat);
 
@@ -24,7 +24,7 @@ pub fn load_shader_file(ty: GLenum, file_src: &str) -> GLuint {
 }
 
 //TODO: write file load logic using http://static.rust-lang.org/doc/master/std/io/fs/struct.File.html
-pub fn load_shader(ty: GLenum, src: StrBuf) -> GLuint {
+pub fn load_shader(ty: GLenum, src: String) -> GLuint {
 	let shader = gl::CreateShader(ty);
 	unsafe {
 		// Attempt to compile the shader
