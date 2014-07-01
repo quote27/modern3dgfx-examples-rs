@@ -256,8 +256,8 @@ fn fmodf(a: f32, n: f32) -> f32 {
 
 fn init_prog(state: &mut GLState) {
 	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "s/PosColorLocalTransform.vert"));
-	shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "s/ColorPassthrough.frag"));
+	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "shaders/PosColorLocalTransform.vert"));
+	shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "shaders/ColorPassthrough.frag"));
 	state.program = shaders::create_program(&shader_list);
 
 	//state.pos_attr = get_attrib(state.program, "position");

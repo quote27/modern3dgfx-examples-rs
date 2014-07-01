@@ -1,6 +1,6 @@
 extern crate gl;
 extern crate glfw;
-extern crate sax;
+//extern crate sax;
 
 use gl::types::*;
 use std::ptr;
@@ -151,30 +151,30 @@ impl Attribute {
 		}
 	}
 
-	pub fn from_xml(tag_name: &str, attr: sax::Attributes) -> Attribute {
-		let attrib_idx: GLuint = match from_str(attr.get("index")) {
-			None => { println!("{} missing attribute: index", tag_name); 0 },
-			Some(x) => x,
-		};
-
-		let size: int = match from_str(attr.get("size")) {
-			None => { println!("{} missing attribute: size", tag_name); -1 },
-			Some(x) => x,
-		};
-
-		let attrib_type: AttribType = match from_str(attr.get("type")) {
-			None => { println!("{} missing attribute: type", tag_name); AttribType::new() },
-			Some(x) => x,
-		};
-
-		Attribute {
-			attrib_idx: attrib_idx,
-			attrib_type: None,
-			size: -1,
-			is_integral: false,
-			data_array: Vec::new()
-		}
-	}
+//	pub fn from_xml(tag_name: &str, attr: sax::Attributes) -> Attribute {
+//		let attrib_idx: GLuint = match from_str(attr.get("index")) {
+//			None => { println!("{} missing attribute: index", tag_name); 0 },
+//			Some(x) => x,
+//		};
+//
+//		let size: int = match from_str(attr.get("size")) {
+//			None => { println!("{} missing attribute: size", tag_name); -1 },
+//			Some(x) => x,
+//		};
+//
+//		let attrib_type: AttribType = match from_str(attr.get("type")) {
+//			None => { println!("{} missing attribute: type", tag_name); AttribType::new() },
+//			Some(x) => x,
+//		};
+//
+//		Attribute {
+//			attrib_idx: attrib_idx,
+//			attrib_type: None,
+//			size: -1,
+//			is_integral: false,
+//			data_array: Vec::new()
+//		}
+//	}
 }
 
 
@@ -194,28 +194,28 @@ impl Mesh {
 		let mut idx_data: Vec<IndexData> = Vec::new();
 		let mut named_vao_list: Vec<(String, Vec<GLuint>)> = Vec::new();
 
-		{
-			use std::io::File;
-			let path = Path::new(file_src);
-			let parser = sax::parse_file(&path).ok().expect("issue loading mesh");;
-
-			for result in parser.iter() {
-				match result {
-					Ok(sax::StartDocument) => ( println!("doc start") ),
-					Ok(sax::EndDocument) => ( println!("doc end") ),
-					Ok(event) => {
-						match event {
-							sax::StartElement(e, attr) => ( println!("start: {} {}", e, attr) ),
-							sax::EndElement(e) => ( println!("end: {}", e) ),
-							sax::Characters(c) => ( println!("char: {}", c) ),
-							_ => (),
-						}
-					},
-					Err(err) => println!("{}", err),
-				}
-			}
-		}
-
+//		{
+//			use std::io::File;
+//			let path = Path::new(file_src);
+//			let parser = sax::parse_file(&path).ok().expect("issue loading mesh");;
+//
+//			for result in parser.iter() {
+//				match result {
+//					Ok(sax::StartDocument) => ( println!("doc start") ),
+//					Ok(sax::EndDocument) => ( println!("doc end") ),
+//					Ok(event) => {
+//						match event {
+//							sax::StartElement(e, attr) => ( println!("start: {} {}", e, attr) ),
+//							sax::EndElement(e) => ( println!("end: {}", e) ),
+//							sax::Characters(c) => ( println!("char: {}", c) ),
+//							_ => (),
+//						}
+//					},
+//					Err(err) => println!("{}", err),
+//				}
+//			}
+//		}
+//
 		let m = MeshData {
 			attrib_array_buf: 0,
 			idx_buf: 0,
