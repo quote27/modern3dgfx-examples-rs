@@ -26,8 +26,10 @@ use std::mem;
 use std::ptr;
 use cgmath::matrix::Matrix4;
 use cgmath::vector::Vector3;
+use util::MatrixStack;
 
 mod shaders;
+mod util;
 // mod mesh;
 
 static GREEN_COLOR:   [GLfloat, ..4]  = [0.0, 1.0, 0.0, 1.0];
@@ -166,13 +168,6 @@ static index_data: [GLshort, ..24] = [
 ];
 // */
 
-fn print_mat(m: &Matrix4<f32>) {
-//	println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.m11, m.m21, m.m31, m.m41);
-//	println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.m12, m.m22, m.m32, m.m42);
-//	println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.m13, m.m23, m.m33, m.m43);
-//	println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.m14, m.m24, m.m34, m.m44);
-}
-
 struct GLState {
 	program: GLuint,
 	pos_attr: GLuint,
@@ -212,14 +207,8 @@ impl GLState {
 		println!("mod_cam_u: {}, cam_clip_u: {}", self.mod_cam_unif, self.cam_clip_unif);
 		println!("vbo: {}, ibo: {}, vao: {}", self.vbo, self.ibo, self.vao);
 		println!("frustum_scale: {}", self.frustum_scale);
-		print_mat(&self.cam_clip_m);
+		util::print_mat(&self.cam_clip_m);
 	}
-}
-
-fn calc_frustum_scale(fov_deg: f32) -> f32 {
-	let deg_rad = 3.14159 * 2.0 / 360.0;
-	let fov_rad = fov_deg * deg_rad;
-	1.0 / (fov_rad / 2.0).tan()
 }
 
 //TODO: inline
@@ -232,12 +221,6 @@ fn get_uniform(program: GLuint, name: &str) -> GLint {
 fn get_attrib(program: GLuint, name: &str) -> GLuint {
 	unsafe { gl::GetAttribLocation(program, name.with_c_str(|ptr| ptr)) as GLuint }
 }
-
-#[inline]
-fn fmodf(a: f32, n: f32) -> f32 {
-	a - (n * ((a/n) as i32) as f32)
-}
-
 
 fn init_prog(state: &mut GLState) {
 	let mut shader_list = Vec::new();
@@ -252,7 +235,7 @@ fn init_prog(state: &mut GLState) {
 	state.mod_cam_unif = get_uniform(state.program, "modelToCameraMatrix");
 	state.cam_clip_unif = get_uniform(state.program, "cameraToClipMatrix");
 
-	state.frustum_scale = calc_frustum_scale(45.0);
+	state.frustum_scale = util::calc_frustum_scale(45.0);
 	let (znear, zfar) = (1.0, 100.0);
 
 	state.cam_clip_m = Matrix4::zero();
@@ -297,115 +280,6 @@ fn init_vao(state: &mut GLState) {
 
 	gl::BindVertexArray(0);
 }
-
-//TODO: inline
-fn deg_rad(ang_deg: f32) -> f32 {
-	let deg_rad = 3.14159 * 2.0 / 360.0;
-	ang_deg * deg_rad
-}
-
-//TODO: inline
-fn clamp(v: f32, min: f32, max: f32) -> f32 {
-	if v < min {
-		min
-	} else if v > max {
-		max
-	} else {
-		v
-	}
-}
-
-fn rotx(ang: f32) -> Matrix4<f32> {
-	let rad = deg_rad(ang);
-	let (cos, sin) = (rad.cos(), rad.sin());
-
-	let mut m: Matrix4<f32> = Matrix4::identity();
-	m.y.y = cos; m.z.y =-sin;
-	m.y.z = sin; m.z.z = cos;
-	m
-}
-
-fn roty(ang: f32) -> Matrix4<f32> {
-	let rad = deg_rad(ang);
-	let (cos, sin) = (rad.cos(), rad.sin());
-
-	let mut m: Matrix4<f32> = Matrix4::identity();
-	m.x.x = cos; m.z.x = sin;
-	m.x.z =-sin; m.z.z = cos;
-	m
-}
-
-fn rotz(ang: f32) -> Matrix4<f32> {
-	let rad = deg_rad(ang);
-	let (cos, sin) = (rad.cos(), rad.sin());
-
-	let mut m: Matrix4<f32> = Matrix4::identity();
-	m.x.x = cos; m.y.x =-sin;
-	m.x.y = sin; m.y.y = cos;
-	m
-}
-
-struct MatrixStack {
-	c: Matrix4<f32>,
-	s: Vec<Matrix4<f32>>,
-}
-impl MatrixStack {
-	pub fn new() -> MatrixStack {
-		MatrixStack {
-			c: Matrix4::identity(),
-			s: Vec::new(),
-		}
-	}
-
-	pub fn top(&self) -> Matrix4<f32> {
-		self.c
-	}
-
-	pub fn rotx(&mut self, deg: f32) {
-		self.c = self.c * ::rotx(deg);
-	}
-
-	pub fn roty(&mut self, deg: f32) {
-		self.c = self.c * ::roty(deg);
-	}
-
-	pub fn rotz(&mut self, deg: f32) {
-		self.c = self.c * ::rotz(deg);
-	}
-
-	pub fn scale(&mut self, sv: Vector3<f32>) {
-		let mut m: Matrix4<f32> = Matrix4::identity();
-		m.x.x = sv.x;
-		m.y.y = sv.y;
-		m.z.z = sv.z;
-		self.c = self.c * m;
-	}
-
-	pub fn trans(&mut self, sv: Vector3<f32>) {
-		let mut m: Matrix4<f32> = Matrix4::identity();
-		m.w.x = sv.x;
-		m.w.y = sv.y;
-		m.w.z = sv.z;
-		self.c = self.c * m;
-	}
-
-	pub fn push(&mut self) {
-		self.s.push(self.c);
-	}
-
-	pub fn pop(&mut self) {
-		self.c = match self.s.pop() {
-			Some(x) => x,
-			None => Matrix4::identity(),
-		}
-	}
-}
-
-
-
-
-
-
 
 
 
@@ -636,27 +510,27 @@ impl Hierarchy {
 
 	pub fn adj_base(&mut self, inc: bool) {
 		self.ang_base += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_base = fmodf(self.ang_base, 360.0);
+		self.ang_base = util::fmodf(self.ang_base, 360.0);
 	}
 	pub fn adj_upperarm(&mut self, inc: bool) {
 		self.ang_upperarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_upperarm = clamp(self.ang_upperarm, -50.0, 0.0);
+		self.ang_upperarm = util::clamp(self.ang_upperarm, -50.0, 0.0);
 	}
 	pub fn adj_lowerarm(&mut self, inc: bool) {
 		self.ang_lowerarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_lowerarm = clamp(self.ang_lowerarm, 0.0, 146.25);
+		self.ang_lowerarm = util::clamp(self.ang_lowerarm, 0.0, 146.25);
 	}
 	pub fn adj_wrist_pitch(&mut self, inc: bool) {
 		self.ang_wrist_pitch += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_wrist_pitch = clamp(self.ang_wrist_pitch, 0.0, 90.0);
+		self.ang_wrist_pitch = util::clamp(self.ang_wrist_pitch, 0.0, 90.0);
 	}
 	pub fn adj_wrist_roll(&mut self, inc: bool) {
 		self.ang_wrist_roll += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_wrist_roll = fmodf(self.ang_wrist_roll, 360.0);
+		self.ang_wrist_roll = util::fmodf(self.ang_wrist_roll, 360.0);
 	}
 	pub fn adj_finger_open(&mut self, inc: bool) {
 		self.ang_finger_open += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_finger_open = clamp(self.ang_finger_open, 9.0, 180.0);
+		self.ang_finger_open = util::clamp(self.ang_finger_open, 9.0, 180.0);
 	}
 
 	pub fn write_pose(&self) {
