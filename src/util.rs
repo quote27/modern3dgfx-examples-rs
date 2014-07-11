@@ -6,16 +6,11 @@ use cgmath::matrix::Matrix4;
 use cgmath::vector::{Vector3, Vector4};
 
 pub fn print_mat(m: &Matrix4<f32>) {
-    // printing in memory layout order [according to nalgebra]
     println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.x.x, m.y.x, m.z.x, m.w.x);
     println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.x.y, m.y.y, m.z.y, m.w.y);
     println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.x.z, m.y.z, m.z.z, m.w.z);
     println!("{: >8.2}{: >8.2}{: >8.2}{: >8.2}", m.x.w, m.y.w, m.z.w, m.w.w);
-    let arr = vec!(m.x.x, m.y.x, m.z.x, m.w.x,
-                   m.x.y, m.y.y, m.z.y, m.w.y,
-                   m.x.z, m.y.z, m.z.z, m.w.z,
-                   m.x.w, m.y.w, m.z.w, m.w.w);
-    println!("{}", arr);
+    println!("{}", m)
 }
 
 fn gen_rotx(ang: f32) -> Matrix4<f32> {

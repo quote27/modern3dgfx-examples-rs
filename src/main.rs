@@ -42,587 +42,579 @@ static MAGENTA_COLOR: [GLfloat, ..4]  = [1.0, 0.0, 1.0, 1.0];
 //*
 static vertex_num: uint = 24;
 static vertex_data:[GLfloat, ..168] = [
-	//Front
-	 1.0,  1.0,  1.0,
-	 1.0, -1.0,  1.0,
-	-1.0, -1.0,  1.0,
-	-1.0,  1.0,  1.0,
+    //Front
+     1.0,  1.0,  1.0,
+     1.0, -1.0,  1.0,
+    -1.0, -1.0,  1.0,
+    -1.0,  1.0,  1.0,
 
-	//Top
-	 1.0,  1.0,  1.0,
-	-1.0,  1.0,  1.0,
-	-1.0,  1.0, -1.0,
-	 1.0,  1.0, -1.0,
+    //Top
+     1.0,  1.0,  1.0,
+    -1.0,  1.0,  1.0,
+    -1.0,  1.0, -1.0,
+     1.0,  1.0, -1.0,
 
-	//Let
-	 1.0,  1.0,  1.0,
-	 1.0,  1.0, -1.0,
-	 1.0, -1.0, -1.0,
-	 1.0, -1.0,  1.0,
+    //Let
+     1.0,  1.0,  1.0,
+     1.0,  1.0, -1.0,
+     1.0, -1.0, -1.0,
+     1.0, -1.0,  1.0,
 
-	//Back
-	 1.0,  1.0, -1.0,
-	-1.0,  1.0, -1.0,
-	-1.0, -1.0, -1.0,
-	 1.0, -1.0, -1.0,
+    //Back
+     1.0,  1.0, -1.0,
+    -1.0,  1.0, -1.0,
+    -1.0, -1.0, -1.0,
+     1.0, -1.0, -1.0,
 
-	//Bottom
-	 1.0, -1.0,  1.0,
-	 1.0, -1.0, -1.0,
-	-1.0, -1.0, -1.0,
-	-1.0, -1.0,  1.0,
+    //Bottom
+     1.0, -1.0,  1.0,
+     1.0, -1.0, -1.0,
+    -1.0, -1.0, -1.0,
+    -1.0, -1.0,  1.0,
 
-	//Right
-	-1.0,  1.0,  1.0,
-	-1.0, -1.0,  1.0,
-	-1.0, -1.0, -1.0,
-	-1.0,  1.0, -1.0,
+    //Right
+    -1.0,  1.0,  1.0,
+    -1.0, -1.0,  1.0,
+    -1.0, -1.0, -1.0,
+    -1.0,  1.0, -1.0,
 
-	//colors
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+    //colors
+    GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+    GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+    GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+    GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
 
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+    BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+    BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+    BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+    BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
 
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+    RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+    RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+    RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+    RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
 
-	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
-	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
-	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
-	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+    YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+    YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+    YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+    YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
 
-	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
-	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
-	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
-	CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+    CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+    CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+    CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
+    CYAN_COLOR[0], CYAN_COLOR[1], CYAN_COLOR[2], CYAN_COLOR[3],
 
-	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
-	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
-	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
-	MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+    MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+    MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+    MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
+    MAGENTA_COLOR[0], MAGENTA_COLOR[1], MAGENTA_COLOR[2], MAGENTA_COLOR[3],
 ];
 
 static index_data: [GLshort, ..36] = [
-	0, 1, 2,
-	2, 3, 0,
+    0, 1, 2,
+    2, 3, 0,
 
-	4, 5, 6,
-	6, 7, 4,
+    4, 5, 6,
+    6, 7, 4,
 
-	8, 9, 10,
-	10, 11, 8,
+    8, 9, 10,
+    10, 11, 8,
 
-	12, 13, 14,
-	14, 15, 12,
+    12, 13, 14,
+    14, 15, 12,
 
-	16, 17, 18,
-	18, 19, 16,
+    16, 17, 18,
+    18, 19, 16,
 
-	20, 21, 22,
-	22, 23, 20,
+    20, 21, 22,
+    22, 23, 20,
 ];
 // */
 
 /* from translations demo
 static vertex_num: uint = 8;
 static vertex_data:[GLfloat, ..56] = [
-	 1.0,  1.0,  1.0,
-	-1.0, -1.0,  1.0,
-	-1.0,  1.0, -1.0,
-	 1.0, -1.0, -1.0,
+    1.0,  1.0,  1.0,
+   -1.0, -1.0,  1.0,
+   -1.0,  1.0, -1.0,
+    1.0, -1.0, -1.0,
 
-	-1.0, -1.0, -1.0,
-	 1.0,  1.0, -1.0,
-	 1.0, -1.0,  1.0,
-	-1.0,  1.0,  1.0,
+   -1.0, -1.0, -1.0,
+    1.0,  1.0, -1.0,
+    1.0, -1.0,  1.0,
+   -1.0,  1.0,  1.0,
 
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+   GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+   BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+   RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+   YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
 
-	GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
-	BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
-	RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
-	YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
+   GREEN_COLOR[0], GREEN_COLOR[1], GREEN_COLOR[2], GREEN_COLOR[3],
+   BLUE_COLOR[0], BLUE_COLOR[1], BLUE_COLOR[2], BLUE_COLOR[3],
+   RED_COLOR[0], RED_COLOR[1], RED_COLOR[2], RED_COLOR[3],
+   YELLOW_COLOR[0], YELLOW_COLOR[1], YELLOW_COLOR[2], YELLOW_COLOR[3],
 ];
 
 static index_data: [GLshort, ..24] = [
-	0, 1, 2,
-	1, 0, 3,
-	2, 3, 0,
-	3, 2, 1,
+   0, 1, 2,
+   1, 0, 3,
+   2, 3, 0,
+   3, 2, 1,
 
-	5, 4, 6,
-	4, 5, 7,
-	7, 6, 4,
-	6, 7, 5,
+   5, 4, 6,
+   4, 5, 7,
+   7, 6, 4,
+   6, 7, 5,
 ];
 // */
 
 struct GLState {
-	program: GLuint,
-	pos_attr: GLuint,
-	color_attr: GLuint,
+    program: GLuint,
+    pos_attr: GLuint,
+    color_attr: GLuint,
 
-	mod_cam_unif: GLint,
-	cam_clip_unif: GLint,
+    mod_cam_unif: GLint,
+    cam_clip_unif: GLint,
 
-	frustum_scale: f32,
-	cam_clip_m: Matrix4<f32>,
+    frustum_scale: f32,
+    cam_clip_m: Matrix4<f32>,
 
-	vbo: GLuint,
-	ibo: GLuint,
-	vao: GLuint,
+    vbo: GLuint,
+    ibo: GLuint,
+    vao: GLuint,
 }
 impl GLState {
-	pub fn new() -> GLState {
-		GLState {
-			program: 0,
-			pos_attr: 0,
-			color_attr: 0,
+    pub fn new() -> GLState {
+        GLState {
+            program: 0,
+            pos_attr: 0,
+            color_attr: 0,
 
-			mod_cam_unif: 0,
-			cam_clip_unif: 0,
+            mod_cam_unif: 0,
+            cam_clip_unif: 0,
 
-			frustum_scale: 1.0,
-			cam_clip_m: Matrix4::zero(),
+            frustum_scale: 1.0,
+            cam_clip_m: Matrix4::zero(),
 
-			vbo: 0,
-			ibo: 0,
-			vao: 0,
-		}
-	}
+            vbo: 0,
+            ibo: 0,
+            vao: 0,
+        }
+    }
 
-	pub fn print(&self) {
-		println!("prog: {}, pos_attr: {}, color_attr: {}", self.program, self.pos_attr, self.color_attr);
-		println!("mod_cam_u: {}, cam_clip_u: {}", self.mod_cam_unif, self.cam_clip_unif);
-		println!("vbo: {}, ibo: {}, vao: {}", self.vbo, self.ibo, self.vao);
-		println!("frustum_scale: {}", self.frustum_scale);
-		util::print_mat(&self.cam_clip_m);
-	}
+    pub fn print(&self) {
+        println!("prog: {}, pos_attr: {}, color_attr: {}", self.program, self.pos_attr, self.color_attr);
+        println!("mod_cam_u: {}, cam_clip_u: {}", self.mod_cam_unif, self.cam_clip_unif);
+        println!("vbo: {}, ibo: {}, vao: {}", self.vbo, self.ibo, self.vao);
+        println!("frustum_scale: {}", self.frustum_scale);
+        util::print_mat(&self.cam_clip_m);
+    }
 }
 
-//TODO: inline
 #[inline]
 fn get_uniform(program: GLuint, name: &str) -> GLint {
-	unsafe { gl::GetUniformLocation(program, name.with_c_str(|ptr| ptr)) }
+    unsafe { gl::GetUniformLocation(program, name.with_c_str(|ptr| ptr)) }
 }
-//TODO: inline
+
 #[inline]
 fn get_attrib(program: GLuint, name: &str) -> GLuint {
-	unsafe { gl::GetAttribLocation(program, name.with_c_str(|ptr| ptr)) as GLuint }
+    unsafe { gl::GetAttribLocation(program, name.with_c_str(|ptr| ptr)) as GLuint }
 }
 
 fn init_prog(state: &mut GLState) {
-	let mut shader_list = Vec::new();
-	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "shaders/PosColorLocalTransform.vert"));
-	shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "shaders/ColorPassthrough.frag"));
-	state.program = shaders::create_program(&shader_list);
+    let mut shader_list = Vec::new();
+    shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "shaders/PosColorLocalTransform.vert"));
+    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "shaders/ColorPassthrough.frag"));
+    state.program = shaders::create_program(&shader_list);
 
-	//state.pos_attr = get_attrib(state.program, "position");
-	state.pos_attr = 0;
-	state.color_attr = get_attrib(state.program, "color");
+    //state.pos_attr = get_attrib(state.program, "position"); // TODO: returning a non-zero value [should be 0 in this case] - I think it's an int->long issue
+    state.pos_attr = 0;
+    state.color_attr = get_attrib(state.program, "color");
 
-	state.mod_cam_unif = get_uniform(state.program, "modelToCameraMatrix");
-	state.cam_clip_unif = get_uniform(state.program, "cameraToClipMatrix");
+    state.mod_cam_unif = get_uniform(state.program, "modelToCameraMatrix");
+    state.cam_clip_unif = get_uniform(state.program, "cameraToClipMatrix");
 
-	state.frustum_scale = util::calc_frustum_scale(45.0);
-	let (znear, zfar) = (1.0, 100.0);
+    state.frustum_scale = util::calc_frustum_scale(45.0);
+    let (znear, zfar) = (1.0, 100.0);
 
-	state.cam_clip_m = Matrix4::zero();
-	state.cam_clip_m.x.x = state.frustum_scale;
-	state.cam_clip_m.y.y = state.frustum_scale;
-	state.cam_clip_m.z.z = (zfar + znear) / (znear - zfar);
-	state.cam_clip_m.z.w = -1.0;
-	state.cam_clip_m.w.z = (2.0 * zfar * znear) / (znear - zfar);
+    state.cam_clip_m = Matrix4::zero();
+    state.cam_clip_m.x.x = state.frustum_scale;
+    state.cam_clip_m.y.y = state.frustum_scale;
+    state.cam_clip_m.z.z = (zfar + znear) / (znear - zfar);
+    state.cam_clip_m.z.w = -1.0;
+    state.cam_clip_m.w.z = (2.0 * zfar * znear) / (znear - zfar);
 
-	gl::UseProgram(state.program);
-	unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::FALSE, mem::transmute(&state.cam_clip_m)); }
-	gl::UseProgram(0);
+    gl::UseProgram(state.program);
+    unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::FALSE, mem::transmute(&state.cam_clip_m)); }
+    gl::UseProgram(0);
 }
 
 fn init_vao(state: &mut GLState) {
-	unsafe {
-	gl::GenBuffers(1, &mut state.vbo);
-	gl::BindBuffer(gl::ARRAY_BUFFER, state.vbo);
-	gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, mem::transmute(&vertex_data[0]), gl::STATIC_DRAW);
-	gl::BindBuffer(gl::ARRAY_BUFFER, 0);
-	}
+    unsafe {
+        gl::GenBuffers(1, &mut state.vbo);
+        gl::BindBuffer(gl::ARRAY_BUFFER, state.vbo);
+        gl::BufferData(gl::ARRAY_BUFFER, (vertex_data.len() * mem::size_of::<GLfloat>()) as GLsizeiptr, mem::transmute(&vertex_data[0]), gl::STATIC_DRAW);
+        gl::BindBuffer(gl::ARRAY_BUFFER, 0);
+    }
 
-	unsafe {
-	gl::GenBuffers(1, &mut state.ibo);
-	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, state.ibo);
-	gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, (index_data.len() * mem::size_of::<GLshort>()) as GLsizeiptr, mem::transmute(&index_data[0]), gl::STATIC_DRAW);
-	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, 0);
-	}
+    unsafe {
+        gl::GenBuffers(1, &mut state.ibo);
+        gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, state.ibo);
+        gl::BufferData(gl::ELEMENT_ARRAY_BUFFER, (index_data.len() * mem::size_of::<GLshort>()) as GLsizeiptr, mem::transmute(&index_data[0]), gl::STATIC_DRAW);
+        gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, 0);
+    }
 
-	unsafe { gl::GenVertexArrays(1, &mut state.vao); }
-	gl::BindVertexArray(state.vao);
+    unsafe { gl::GenVertexArrays(1, &mut state.vao); }
+    gl::BindVertexArray(state.vao);
 
-	let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
-	gl::BindBuffer(gl::ARRAY_BUFFER, state.vbo);
-	gl::EnableVertexAttribArray(state.pos_attr);
-	gl::EnableVertexAttribArray(state.color_attr);
-	unsafe {
-	gl::VertexAttribPointer(state.pos_attr, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
-	gl::VertexAttribPointer(state.color_attr, 4, gl::FLOAT, gl::FALSE, 0, mem::transmute(color_data_offset));
-	}
-	gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, state.ibo);
+    let color_data_offset = mem::size_of::<GLfloat>() * 3 * vertex_num;
+    gl::BindBuffer(gl::ARRAY_BUFFER, state.vbo);
+    gl::EnableVertexAttribArray(state.pos_attr);
+    gl::EnableVertexAttribArray(state.color_attr);
+    unsafe {
+        gl::VertexAttribPointer(state.pos_attr, 3, gl::FLOAT, gl::FALSE, 0, ptr::null());
+        gl::VertexAttribPointer(state.color_attr, 4, gl::FLOAT, gl::FALSE, 0, mem::transmute(color_data_offset));
+    }
+    gl::BindBuffer(gl::ELEMENT_ARRAY_BUFFER, state.ibo);
 
-	gl::BindVertexArray(0);
+    gl::BindVertexArray(0);
 }
 
 
 
 struct Hierarchy {
-	pos_base: Vector3<f32>,
-	ang_base: f32,
+    pos_base: Vector3<f32>,
+    ang_base: f32,
 
-	pos_base_left: Vector3<f32>,
-	pos_base_right: Vector3<f32>,
-	scale_base_z: f32,
+    pos_base_left: Vector3<f32>,
+    pos_base_right: Vector3<f32>,
+    scale_base_z: f32,
 
-	ang_upperarm: f32,
-	size_upperarm: f32,
+    ang_upperarm: f32,
+    size_upperarm: f32,
 
-	pos_lowerarm: Vector3<f32>,
-	ang_lowerarm: f32,
-	len_lowerarm: f32,
-	width_lowerarm: f32,
+    pos_lowerarm: Vector3<f32>,
+    ang_lowerarm: f32,
+    len_lowerarm: f32,
+    width_lowerarm: f32,
 
-	pos_wrist: Vector3<f32>,
-	ang_wrist_roll: f32,
-	ang_wrist_pitch: f32,
-	len_wrist: f32,
-	width_wrist: f32,
+    pos_wrist: Vector3<f32>,
+    ang_wrist_roll: f32,
+    ang_wrist_pitch: f32,
+    len_wrist: f32,
+    width_wrist: f32,
 
-	pos_left_finger: Vector3<f32>,
-	pos_right_finger: Vector3<f32>,
-	ang_finger_open: f32,
-	len_finger: f32,
-	width_finger: f32,
-	ang_lower_finger: f32,
+    pos_left_finger: Vector3<f32>,
+    pos_right_finger: Vector3<f32>,
+    ang_finger_open: f32,
+    len_finger: f32,
+    width_finger: f32,
+    ang_lower_finger: f32,
 
-	ang_inc_standard: f32,
-	ang_inc_small: f32,
+    ang_inc_standard: f32,
+    ang_inc_small: f32,
 }
 
 impl Hierarchy {
 
-	pub fn new() -> Hierarchy {
-		Hierarchy {
-			pos_base:		Vector3::new(3.0, -5.0, -40.0),
-			ang_base:		-45.0,
-			pos_base_left:	Vector3::new(2.0, 0.0, 0.0),
-			pos_base_right:	Vector3::new(-2.0, 0.0, 0.0),
-			scale_base_z:	3.0,
-			ang_upperarm:	-33.75,
-			size_upperarm:	9.0,
-			pos_lowerarm:	Vector3::new(0.0, 0.0, 8.0),
-			ang_lowerarm:	146.25,
-			len_lowerarm:	5.0,
-			width_lowerarm:	1.5,
-			pos_wrist:		Vector3::new(0.0, 0.0, 5.0),
-			ang_wrist_roll:	0.0,
-			ang_wrist_pitch:67.5,
-			len_wrist:		2.0,
-			width_wrist:	2.0,
-			pos_left_finger:Vector3::new(1.0, 0.0, 1.0),
-			pos_right_finger:Vector3::new(-1.0, 0.0, 1.0),
-			ang_finger_open:180.0,
-			len_finger:		2.0,
-			width_finger:	0.5,
-			ang_lower_finger:45.0,
-			ang_inc_standard:11.25,
-			ang_inc_small: 	9.0,
-		}
-	}
+    pub fn new() -> Hierarchy {
+        Hierarchy {
+            pos_base:		Vector3::new(3.0, -5.0, -40.0),
+            ang_base:		-45.0,
+            pos_base_left:	Vector3::new(2.0, 0.0, 0.0),
+            pos_base_right:	Vector3::new(-2.0, 0.0, 0.0),
+            scale_base_z:	3.0,
+            ang_upperarm:	-33.75,
+            size_upperarm:	9.0,
+            pos_lowerarm:	Vector3::new(0.0, 0.0, 8.0),
+            ang_lowerarm:	146.25,
+            len_lowerarm:	5.0,
+            width_lowerarm:	1.5,
+            pos_wrist:		Vector3::new(0.0, 0.0, 5.0),
+            ang_wrist_roll:	0.0,
+            ang_wrist_pitch:67.5,
+            len_wrist:		2.0,
+            width_wrist:	2.0,
+            pos_left_finger:Vector3::new(1.0, 0.0, 1.0),
+            pos_right_finger:Vector3::new(-1.0, 0.0, 1.0),
+            ang_finger_open:180.0,
+            len_finger:		2.0,
+            width_finger:	0.5,
+            ang_lower_finger:45.0,
+            ang_inc_standard:11.25,
+            ang_inc_small: 	9.0,
+        }
+    }
 
-	pub fn draw(&self, state: &GLState) {
-		//model to camera matrix stack
-		let mut mcs = MatrixStack::new();
+    pub fn draw(&self, state: &GLState) {
+        //model to camera matrix stack
+        let mut mcs = MatrixStack::new();
 
-		gl::UseProgram(state.program);
-		gl::BindVertexArray(state.vao);
+        gl::UseProgram(state.program);
+        gl::BindVertexArray(state.vao);
 
-		mcs.trans(self.pos_base);
-		mcs.roty(self.ang_base);
+        mcs.trans(self.pos_base);
+        mcs.roty(self.ang_base);
 
-		{ // left base
-			mcs.push();
-			mcs.trans(self.pos_base_left);
-			mcs.scale(Vector3::new(1.0, 1.0, self.scale_base_z));
-			unsafe{
-				gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-				gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-			}
-			mcs.pop();
-		}
+        { // left base
+            mcs.push();
+            mcs.trans(self.pos_base_left);
+            mcs.scale(Vector3::new(1.0, 1.0, self.scale_base_z));
+            unsafe{
+                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+            }
+            mcs.pop();
+        }
 
-		{ // right base
-			mcs.push();
-			mcs.trans(self.pos_base_right);
-			mcs.scale(Vector3::new(1.0, 1.0, self.scale_base_z));
-			unsafe{
-				gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-				gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-			}
-			mcs.pop();
-		}
+        { // right base
+            mcs.push();
+            mcs.trans(self.pos_base_right);
+            mcs.scale(Vector3::new(1.0, 1.0, self.scale_base_z));
+            unsafe{
+                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+            }
+            mcs.pop();
+        }
 
-		self.draw_upperarm(&mut mcs, state);
+        self.draw_upperarm(&mut mcs, state);
 
-		gl::BindVertexArray(0);
-		gl::UseProgram(0);
-	}
+        gl::BindVertexArray(0);
+        gl::UseProgram(0);
+    }
 
-	fn draw_fingers(&self, mcs: &mut MatrixStack, state: &GLState) {
-		// draw left finger
-		mcs.push();
-		mcs.trans(self.pos_left_finger);
-		mcs.roty(self.ang_finger_open);
+    fn draw_fingers(&self, mcs: &mut MatrixStack, state: &GLState) {
+        // draw left finger
+        mcs.push();
+        mcs.trans(self.pos_left_finger);
+        mcs.roty(self.ang_finger_open);
 
-		mcs.push();
-		mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
-		mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
-		unsafe {
-		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-		}
-		mcs.pop();
+        mcs.push();
+        mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
+        mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+        unsafe {
+            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+        }
+        mcs.pop();
 
-		{ // draw left lower finger
-			mcs.push();
-			mcs.trans(Vector3::new(0.0, 0.0, self.len_finger));
-			mcs.roty(-self.ang_lower_finger);
+        { // draw left lower finger
+            mcs.push();
+            mcs.trans(Vector3::new(0.0, 0.0, self.len_finger));
+            mcs.roty(-self.ang_lower_finger);
 
-			mcs.push();
-			mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
-			mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
-			unsafe {
-			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-			}
-			mcs.pop();
+            mcs.push();
+            mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
+            mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+            unsafe {
+                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+            }
+            mcs.pop();
 
-			mcs.pop();
-		}
+            mcs.pop();
+        }
 
-		mcs.pop();
+        mcs.pop();
 
-		// draw right finger
-		mcs.push();
-		mcs.trans(self.pos_right_finger);
-		mcs.roty(-self.ang_finger_open);
+        // draw right finger
+        mcs.push();
+        mcs.trans(self.pos_right_finger);
+        mcs.roty(-self.ang_finger_open);
 
-		mcs.push();
-		mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
-		mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
-		unsafe {
-		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-		}
-		mcs.pop();
+        mcs.push();
+        mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
+        mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+        unsafe {
+            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+        }
+        mcs.pop();
 
-		{ // draw right lower finger
-			mcs.push();
-			mcs.trans(Vector3::new(0.0, 0.0, self.len_finger));
-			mcs.roty(self.ang_lower_finger);
+        { // draw right lower finger
+            mcs.push();
+            mcs.trans(Vector3::new(0.0, 0.0, self.len_finger));
+            mcs.roty(self.ang_lower_finger);
 
-			mcs.push();
-			mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
-			mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
-			unsafe {
-			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-			}
-			mcs.pop();
+            mcs.push();
+            mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
+            mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
+            unsafe {
+                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+            }
+            mcs.pop();
 
-			mcs.pop();
-		}
+            mcs.pop();
+        }
 
-		mcs.pop();
-	}
+        mcs.pop();
+    }
 
-	fn draw_wrist(&self, mcs: &mut MatrixStack, state: &GLState) {
-		mcs.push();
-		mcs.trans(self.pos_wrist);
-		mcs.rotz(self.ang_wrist_roll);
-		mcs.rotx(self.ang_wrist_pitch);
+    fn draw_wrist(&self, mcs: &mut MatrixStack, state: &GLState) {
+        mcs.push();
+        mcs.trans(self.pos_wrist);
+        mcs.rotz(self.ang_wrist_roll);
+        mcs.rotx(self.ang_wrist_pitch);
 
-		mcs.push();
-		mcs.scale(Vector3::new(self.width_wrist / 2.0, self.width_wrist / 2.0, self.len_wrist / 2.0));
-		unsafe {
-		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-		}
-		mcs.pop();
+        mcs.push();
+        mcs.scale(Vector3::new(self.width_wrist / 2.0, self.width_wrist / 2.0, self.len_wrist / 2.0));
+        unsafe {
+            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+        }
+        mcs.pop();
 
-		self.draw_fingers(mcs, state);
-		mcs.pop();
-	}
+        self.draw_fingers(mcs, state);
+        mcs.pop();
+    }
 
-	fn draw_lowerarm(&self, mcs: &mut MatrixStack, state: &GLState) {
-		mcs.push();
-		mcs.trans(self.pos_lowerarm);
-		mcs.rotx(self.ang_lowerarm);
+    fn draw_lowerarm(&self, mcs: &mut MatrixStack, state: &GLState) {
+        mcs.push();
+        mcs.trans(self.pos_lowerarm);
+        mcs.rotx(self.ang_lowerarm);
 
-		mcs.push();
-		mcs.trans(Vector3::new(0.0, 0.0, self.len_lowerarm / 2.0));
-		mcs.scale(Vector3::new(self.width_lowerarm / 2.0, self.width_lowerarm / 2.0, self.len_lowerarm / 2.0));
-		unsafe {
-		gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-		gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-		}
-		mcs.pop();
+        mcs.push();
+        mcs.trans(Vector3::new(0.0, 0.0, self.len_lowerarm / 2.0));
+        mcs.scale(Vector3::new(self.width_lowerarm / 2.0, self.width_lowerarm / 2.0, self.len_lowerarm / 2.0));
+        unsafe {
+            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+        }
+        mcs.pop();
 
-		self.draw_wrist(mcs, state);
-		mcs.pop();
-	}
+        self.draw_wrist(mcs, state);
+        mcs.pop();
+    }
 
-	fn draw_upperarm(&self, mcs: &mut MatrixStack, state: &GLState) {
-		mcs.push();
-		mcs.rotx(self.ang_upperarm);
+    fn draw_upperarm(&self, mcs: &mut MatrixStack, state: &GLState) {
+        mcs.push();
+        mcs.rotx(self.ang_upperarm);
 
-		{
-			mcs.push();
-			mcs.trans(Vector3::new(0.0, 0.0, self.size_upperarm / 2.0 - 1.0));
-			mcs.scale(Vector3::new(1.0, 1.0, self.size_upperarm / 2.0));
-			unsafe {
-			gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
-			gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
-			}
-			mcs.pop();
-		}
+        {
+            mcs.push();
+            mcs.trans(Vector3::new(0.0, 0.0, self.size_upperarm / 2.0 - 1.0));
+            mcs.scale(Vector3::new(1.0, 1.0, self.size_upperarm / 2.0));
+            unsafe {
+                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
+            }
+            mcs.pop();
+        }
 
-		self.draw_lowerarm(mcs, state);
-		mcs.pop();
-	}
+        self.draw_lowerarm(mcs, state);
+        mcs.pop();
+    }
 
-	pub fn adj_base(&mut self, inc: bool) {
-		self.ang_base += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_base = util::fmodf(self.ang_base, 360.0);
-	}
-	pub fn adj_upperarm(&mut self, inc: bool) {
-		self.ang_upperarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_upperarm = util::clamp(self.ang_upperarm, -50.0, 0.0);
-	}
-	pub fn adj_lowerarm(&mut self, inc: bool) {
-		self.ang_lowerarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_lowerarm = util::clamp(self.ang_lowerarm, 0.0, 146.25);
-	}
-	pub fn adj_wrist_pitch(&mut self, inc: bool) {
-		self.ang_wrist_pitch += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_wrist_pitch = util::clamp(self.ang_wrist_pitch, 0.0, 90.0);
-	}
-	pub fn adj_wrist_roll(&mut self, inc: bool) {
-		self.ang_wrist_roll += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_wrist_roll = util::fmodf(self.ang_wrist_roll, 360.0);
-	}
-	pub fn adj_finger_open(&mut self, inc: bool) {
-		self.ang_finger_open += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
-		self.ang_finger_open = util::clamp(self.ang_finger_open, 9.0, 180.0);
-	}
+    pub fn adj_base(&mut self, inc: bool) {
+        self.ang_base += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+        self.ang_base = util::fmodf(self.ang_base, 360.0);
+    }
+    pub fn adj_upperarm(&mut self, inc: bool) {
+        self.ang_upperarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+        self.ang_upperarm = util::clamp(self.ang_upperarm, -50.0, 0.0);
+    }
+    pub fn adj_lowerarm(&mut self, inc: bool) {
+        self.ang_lowerarm += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+        self.ang_lowerarm = util::clamp(self.ang_lowerarm, 0.0, 146.25);
+    }
+    pub fn adj_wrist_pitch(&mut self, inc: bool) {
+        self.ang_wrist_pitch += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+        self.ang_wrist_pitch = util::clamp(self.ang_wrist_pitch, 0.0, 90.0);
+    }
+    pub fn adj_wrist_roll(&mut self, inc: bool) {
+        self.ang_wrist_roll += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+        self.ang_wrist_roll = util::fmodf(self.ang_wrist_roll, 360.0);
+    }
+    pub fn adj_finger_open(&mut self, inc: bool) {
+        self.ang_finger_open += if inc { self.ang_inc_standard } else { -self.ang_inc_standard };
+        self.ang_finger_open = util::clamp(self.ang_finger_open, 9.0, 180.0);
+    }
 
-	pub fn write_pose(&self) {
-		println!("ang_base:\t{}", self.ang_base);
-		println!("ang_upperarm:\t{}", self.ang_upperarm);
-		println!("ang_lowerarm:\t{}", self.ang_lowerarm);
-		println!("ang_wrist_pitch:\t{}", self.ang_wrist_pitch);
-		println!("ang_wrist_roll:\t{}", self.ang_wrist_roll);
-		println!("ang_finger_open:\t{}", self.ang_finger_open);
-		println!("");
-	}
+    pub fn write_pose(&self) {
+        println!("ang_base:\t{}", self.ang_base);
+        println!("ang_upperarm:\t{}", self.ang_upperarm);
+        println!("ang_lowerarm:\t{}", self.ang_lowerarm);
+        println!("ang_wrist_pitch:\t{}", self.ang_wrist_pitch);
+        println!("ang_wrist_roll:\t{}", self.ang_wrist_roll);
+        println!("ang_finger_open:\t{}", self.ang_finger_open);
+        println!("");
+    }
 }
-
-
-
-
 
 
 fn init() -> GLState {
-	let mut state = GLState::new();
+    let mut state = GLState::new();
 
-	init_prog(&mut state);
-	init_vao(&mut state);
+    init_prog(&mut state);
+    init_vao(&mut state);
 
-	gl::Enable(gl::CULL_FACE);
-	gl::CullFace(gl::BACK);
-	gl::FrontFace(gl::CW);
+    gl::Enable(gl::CULL_FACE);
+    gl::CullFace(gl::BACK);
+    gl::FrontFace(gl::CW);
 
-	gl::Enable(gl::DEPTH_TEST);
-	gl::DepthMask(gl::TRUE);
-	gl::DepthFunc(gl::LEQUAL);
-	gl::DepthRange(0.0, 1.0);
-	state
+    gl::Enable(gl::DEPTH_TEST);
+    gl::DepthMask(gl::TRUE);
+    gl::DepthFunc(gl::LEQUAL);
+    gl::DepthRange(0.0, 1.0);
+    state
 }
 
 fn display(state: &GLState, win: &glfw::Window, robot: &Hierarchy) {
-	gl::ClearColor(0.0, 0.0, 0.0, 0.0);
-	gl::ClearDepth(1.0);
-	gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
+    gl::ClearColor(0.0, 0.0, 0.0, 0.0);
+    gl::ClearDepth(1.0);
+    gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
 
-//	let mut ms = MatrixStack::new();
-//	ms.trans(Vector3::new(0.0, 0.0, -20.0));
-//	gl::UseProgram(state.program);
-//	// draw something
-//	gl::BindVertexArray(state.vao);
-//
-//	let m = ms.top();
-//
-//	unsafe { gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&m)); }
-//	unsafe { gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null()); }
-//
-//	gl::BindVertexArray(0);
-//	gl::UseProgram(0);
-	
-	robot.draw(state);
+    //	let mut ms = MatrixStack::new();
+    //	ms.trans(Vector3::new(0.0, 0.0, -20.0));
+    //	gl::UseProgram(state.program);
+    //	// draw something
+    //	gl::BindVertexArray(state.vao);
+    //
+    //	let m = ms.top();
+    //
+    //	unsafe { gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&m)); }
+    //	unsafe { gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null()); }
+    //
+    //	gl::BindVertexArray(0);
+    //	gl::UseProgram(0);
 
-	win.swap_buffers();
+    robot.draw(state);
+
+    win.swap_buffers();
 }
 
-
-
 fn robot_kb(robot: &mut Hierarchy, event: glfw::WindowEvent) {
-	match event {
-	glfw::KeyEvent(glfw::KeyA, _, glfw::Press, _) => { robot.adj_base(true)		    }
-	glfw::KeyEvent(glfw::KeyD, _, glfw::Press, _) => { robot.adj_base(false)        }
-	glfw::KeyEvent(glfw::KeyW, _, glfw::Press, _) => { robot.adj_upperarm(false)    }
-	glfw::KeyEvent(glfw::KeyS, _, glfw::Press, _) => { robot.adj_upperarm(true)     }
-	glfw::KeyEvent(glfw::KeyR, _, glfw::Press, _) => { robot.adj_lowerarm(false)    }
-	glfw::KeyEvent(glfw::KeyF, _, glfw::Press, _) => { robot.adj_lowerarm(true)     }
-	glfw::KeyEvent(glfw::KeyT, _, glfw::Press, _) => { robot.adj_wrist_pitch(false) }
-	glfw::KeyEvent(glfw::KeyG, _, glfw::Press, _) => { robot.adj_wrist_pitch(true)  }
-	glfw::KeyEvent(glfw::KeyZ, _, glfw::Press, _) => { robot.adj_wrist_roll(true)   }
-	glfw::KeyEvent(glfw::KeyC, _, glfw::Press, _) => { robot.adj_wrist_roll(false)  }
-	glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => { robot.adj_finger_open(true)  }
-	glfw::KeyEvent(glfw::KeyE, _, glfw::Press, _) => { robot.adj_finger_open(false) }
-	glfw::KeyEvent(glfw::KeyP, _, glfw::Press, _) => { robot.write_pose()           }
-	_ => { }
-	}
+    match event {
+        glfw::KeyEvent(glfw::KeyA, _, glfw::Press, _) => { robot.adj_base(true)		    }
+        glfw::KeyEvent(glfw::KeyD, _, glfw::Press, _) => { robot.adj_base(false)        }
+        glfw::KeyEvent(glfw::KeyW, _, glfw::Press, _) => { robot.adj_upperarm(false)    }
+        glfw::KeyEvent(glfw::KeyS, _, glfw::Press, _) => { robot.adj_upperarm(true)     }
+        glfw::KeyEvent(glfw::KeyR, _, glfw::Press, _) => { robot.adj_lowerarm(false)    }
+        glfw::KeyEvent(glfw::KeyF, _, glfw::Press, _) => { robot.adj_lowerarm(true)     }
+        glfw::KeyEvent(glfw::KeyT, _, glfw::Press, _) => { robot.adj_wrist_pitch(false) }
+        glfw::KeyEvent(glfw::KeyG, _, glfw::Press, _) => { robot.adj_wrist_pitch(true)  }
+        glfw::KeyEvent(glfw::KeyZ, _, glfw::Press, _) => { robot.adj_wrist_roll(true)   }
+        glfw::KeyEvent(glfw::KeyC, _, glfw::Press, _) => { robot.adj_wrist_roll(false)  }
+        glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _) => { robot.adj_finger_open(true)  }
+        glfw::KeyEvent(glfw::KeyE, _, glfw::Press, _) => { robot.adj_finger_open(false) }
+        glfw::KeyEvent(glfw::KeyP, _, glfw::Press, _) => { robot.write_pose()           }
+        _ => { }
+    }
 }
 
 fn resize(w: i32, h: i32, state: &mut GLState) {
-	println!("resize event: {} x {}", w, h);
-	state.cam_clip_m.x.x = state.frustum_scale * (h as f32 / w as f32);
-	state.cam_clip_m.y.y = state.frustum_scale;
+    println!("resize event: {} x {}", w, h);
+    state.cam_clip_m.x.x = state.frustum_scale * (h as f32 / w as f32);
+    state.cam_clip_m.y.y = state.frustum_scale;
 
-	gl::UseProgram(state.program);
-	unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::FALSE, mem::transmute(&state.cam_clip_m)); }
-	gl::UseProgram(0);
+    gl::UseProgram(state.program);
+    unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::FALSE, mem::transmute(&state.cam_clip_m)); }
+    gl::UseProgram(0);
 
-	gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
+    gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
 }
-
 
 #[start]
 fn start(argc: int, argv: *const *const u8) -> int {
@@ -630,10 +622,7 @@ fn start(argc: int, argv: *const *const u8) -> int {
 }
 
 fn main() {
-
-	//let m = mesh::Mesh::new("s/mesh/UnitCubeTint.xml");
-
-
+    //let m = mesh::Mesh::new("s/mesh/UnitCubeTint.xml");
 
     let glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
@@ -641,47 +630,46 @@ fn main() {
     glfw.window_hint(glfw::ContextVersion(3, 2));
     glfw.window_hint(glfw::OpenglForwardCompat(true));
     glfw.window_hint(glfw::OpenglProfile(glfw::OpenGlCoreProfile));
-	//glfw.window_hint(glfw::Resizable(false));
+    //glfw.window_hint(glfw::Resizable(false));
 
     let (window, events) = glfw.create_window(600, 600, "OpenGL", glfw::Windowed)
         .expect("Failed to create GLFW window.");
 
     window.make_current(); //make context current before calling gl::load_with
     window.set_key_polling(true); //enable internal polling function
-	window.set_size_polling(true); //enable polling for size changes
+    window.set_size_polling(true); //enable polling for size changes
 
     gl::load_with(|s| glfw.get_proc_address(s)); //loading opengl function pointers
 
-	let mut state = init();
-	state.print();
+    let mut state = init();
+    state.print();
 
-	let mut robot = Hierarchy::new();
-	let mut depth_clamp = false;
+    let mut robot = Hierarchy::new();
+    let mut depth_clamp = false;
 
 
     while !window.should_close() {
         glfw.poll_events();
         for (_, event) in glfw::flush_messages(&events) {
-			match event {
-				glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => { window.set_should_close(true); }
-				//glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _)      => { window.set_should_close(true); }
-				glfw::KeyEvent(glfw::KeyL, _, glfw::Press, _)      => {
-					if depth_clamp {
-						gl::Disable(gl::DEPTH_CLAMP);
-					} else {
-						gl::Enable(gl::DEPTH_CLAMP);
-					}
-					depth_clamp = !depth_clamp;
-				}
-				glfw::SizeEvent(w, h) => { resize(w, h, &mut state); }
-				_ => { robot_kb(&mut robot, event); }
-			}
+            match event {
+                glfw::KeyEvent(glfw::KeyEscape, _, glfw::Press, _) => { window.set_should_close(true); }
+                //glfw::KeyEvent(glfw::KeyQ, _, glfw::Press, _)      => { window.set_should_close(true); }
+                glfw::KeyEvent(glfw::KeyL, _, glfw::Press, _)      => {
+                    if depth_clamp {
+                        gl::Disable(gl::DEPTH_CLAMP);
+                    } else {
+                        gl::Enable(gl::DEPTH_CLAMP);
+                    }
+                    depth_clamp = !depth_clamp;
+                }
+                glfw::SizeEvent(w, h) => { resize(w, h, &mut state); }
+                _ => { robot_kb(&mut robot, event); }
+            }
         }
 
-		display(&state, &window, &robot);
+        display(&state, &window, &robot);
     }
 
-    // Cleanup
     gl::DeleteProgram(state.program);
     unsafe {
         gl::DeleteBuffers(1, &state.vbo);
