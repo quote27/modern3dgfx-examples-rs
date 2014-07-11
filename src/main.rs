@@ -19,7 +19,6 @@ extern crate native;
 extern crate gl;
 extern crate glfw;
 extern crate cgmath;
-// extern crate nalgebra;
 
 use gl::types::*;
 use glfw::Context;
@@ -240,20 +239,6 @@ fn fmodf(a: f32, n: f32) -> f32 {
 }
 
 
-
-// matrix format - row major memory order
-// initial memory order -- using this for now, passing true to opengl
-// m11 m21 m31 m41
-// m12 m22 m32 m42
-// m13 m23 m33 m43
-// m14 m24 m34 m44
-//
-//transposed logically
-// m11 m12 m13 m14
-// m22 m22 m23 m24
-// m33 m32 m33 m34
-// m44 m42 m43 m44
-
 fn init_prog(state: &mut GLState) {
 	let mut shader_list = Vec::new();
 	shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "shaders/PosColorLocalTransform.vert"));
@@ -378,17 +363,14 @@ impl MatrixStack {
 
 	pub fn rotx(&mut self, deg: f32) {
 		self.c = self.c * ::rotx(deg);
-		//self.c = ::rotx(deg) * self.c;
 	}
 
 	pub fn roty(&mut self, deg: f32) {
 		self.c = self.c * ::roty(deg);
-		//self.c = ::roty(deg) * self.c;
 	}
 
 	pub fn rotz(&mut self, deg: f32) {
 		self.c = self.c * ::rotz(deg);
-		//self.c = ::rotz(deg) * self.c;
 	}
 
 	pub fn scale(&mut self, sv: Vector3<f32>) {
@@ -397,7 +379,6 @@ impl MatrixStack {
 		m.y.y = sv.y;
 		m.z.z = sv.z;
 		self.c = self.c * m;
-		//self.c = m * self.c;
 	}
 
 	pub fn trans(&mut self, sv: Vector3<f32>) {
@@ -406,7 +387,6 @@ impl MatrixStack {
 		m.w.y = sv.y;
 		m.w.z = sv.z;
 		self.c = self.c * m;
-		//self.c = m * self.c;
 	}
 
 	pub fn push(&mut self) {
