@@ -12,7 +12,7 @@ pub fn load_file(file_src: &str) -> String {
 	let path = Path::new(file_src);
 	let mut f = File::open(&path);
 
-	let dat = f.read_to_str().ok().expect(format!("unable to open {} file", file_src).as_slice());
+	let dat = f.read_to_string().ok().expect(format!("unable to open {} file", file_src).as_slice());
 
 	println!("reading {0} file:\n{1}\n---", file_src, dat);
 

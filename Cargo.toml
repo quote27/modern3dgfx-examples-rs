@@ -12,5 +12,5 @@ git = "https://github.com/bjz/gl-rs.git"
 [dependencies.glfw]
 git = "https://github.com/bjz/glfw-rs.git"
 
-[dependencies.nalgebra]
-git = "https://github.com/sebcrozet/nalgebra.git"
+[dependencies.cgmath]
+git = "https://github.com/bjz/cgmath-rs.git"
