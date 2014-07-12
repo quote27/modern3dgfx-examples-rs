@@ -1,19 +1,5 @@
-// Copyright 2013 The gl-rs developers. For a full listing of the authors,
-// refer to the AUTHORS file at the top-level directory of this distribution.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//     http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-
 #![feature(globs)]
+#![feature(macro_rules)]
 
 extern crate native;
 extern crate gl;
@@ -28,10 +14,11 @@ use cgmath::matrix::Matrix4;
 use cgmath::vector::Vector3;
 use util::MatrixStack;
 use shaders::{Shader, Program, Uniform};
+use mesh::Mesh;
 
 mod shaders;
 mod util;
-// mod mesh;
+mod mesh;
 
 static GREEN_COLOR:   [GLfloat, ..4]  = [0.0, 1.0, 0.0, 1.0];
 static BLUE_COLOR:    [GLfloat, ..4]  = [0.0, 0.0, 1.0, 1.0];
@@ -555,7 +542,7 @@ fn init() -> GLState {
     state
 }
 
-fn display(state: &GLState, win: &glfw::Window, robot: &Hierarchy) {
+fn display(state: &GLState, win: &glfw::Window, robot: &Hierarchy, m: &Mesh) {
     gl::ClearColor(0.0, 0.0, 0.0, 0.0);
     gl::ClearDepth(1.0);
     gl::Clear(gl::COLOR_BUFFER_BIT | gl::DEPTH_BUFFER_BIT);
@@ -574,8 +561,9 @@ fn display(state: &GLState, win: &glfw::Window, robot: &Hierarchy) {
     //	gl::BindVertexArray(0);
     //	gl::UseProgram(0);
 
-    robot.draw(state);
+//    robot.draw(state);
 
+    m.render();
     win.swap_buffers();
 }
 
@@ -616,7 +604,6 @@ fn start(argc: int, argv: *const *const u8) -> int {
 }
 
 fn main() {
-    //let m = mesh::Mesh::new("s/mesh/UnitCubeTint.xml");
 
     let glfw = glfw::init(glfw::FAIL_ON_ERRORS).unwrap();
 
@@ -641,6 +628,8 @@ fn main() {
     let mut robot = Hierarchy::new();
     let mut depth_clamp = false;
 
+    //let m = mesh::Mesh::new("s/mesh/UnitCubeTint.xml");
+    let unit_plane = mesh::unit_plane();
 
     while !window.should_close() {
         glfw.poll_events();
@@ -661,7 +650,7 @@ fn main() {
             }
         }
 
-        display(&state, &window, &robot);
+        display(&state, &window, &robot, &unit_plane);
     }
 
     state.delete();
