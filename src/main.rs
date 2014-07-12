@@ -27,6 +27,7 @@ use std::ptr;
 use cgmath::matrix::Matrix4;
 use cgmath::vector::Vector3;
 use util::MatrixStack;
+use shaders::{Shader, Program, Uniform};
 
 mod shaders;
 mod util;
@@ -169,12 +170,12 @@ static index_data: [GLshort, ..24] = [
 // */
 
 struct GLState {
-    program: GLuint,
+    program: Program,
     pos_attr: GLuint,
     color_attr: GLuint,
 
-    mod_cam_unif: GLint,
-    cam_clip_unif: GLint,
+    mod_cam_unif: Uniform,
+    cam_clip_unif: Uniform,
 
     frustum_scale: f32,
     cam_clip_m: Matrix4<f32>,
@@ -184,69 +185,55 @@ struct GLState {
     vao: GLuint,
 }
 impl GLState {
-    pub fn new() -> GLState {
-        GLState {
-            program: 0,
-            pos_attr: 0,
-            color_attr: 0,
-
-            mod_cam_unif: 0,
-            cam_clip_unif: 0,
-
-            frustum_scale: 1.0,
-            cam_clip_m: Matrix4::zero(),
-
-            vbo: 0,
-            ibo: 0,
-            vao: 0,
-        }
-    }
-
     pub fn print(&self) {
         println!("prog: {}, pos_attr: {}, color_attr: {}", self.program, self.pos_attr, self.color_attr);
-        println!("mod_cam_u: {}, cam_clip_u: {}", self.mod_cam_unif, self.cam_clip_unif);
+        println!("mod_cam_unif: {}, cam_clip_unif: {}", self.mod_cam_unif, self.cam_clip_unif);
         println!("vbo: {}, ibo: {}, vao: {}", self.vbo, self.ibo, self.vao);
         println!("frustum_scale: {}", self.frustum_scale);
         util::print_mat(&self.cam_clip_m);
     }
+
+    pub fn delete(&mut self) {
+    }
 }
 
-#[inline]
-fn get_uniform(program: GLuint, name: &str) -> GLint {
-    unsafe { gl::GetUniformLocation(program, name.with_c_str(|ptr| ptr)) }
-}
+fn init_prog() -> GLState {
+    let prog =  Program::new(&vec!(
+            Shader::from_file(gl::VERTEX_SHADER, "shaders/PosColorLocalTransform.vert"),
+            Shader::from_file(gl::FRAGMENT_SHADER, "shaders/ColorPassthrough.frag"),
+        ));
 
-#[inline]
-fn get_attrib(program: GLuint, name: &str) -> GLuint {
-    unsafe { gl::GetAttribLocation(program, name.with_c_str(|ptr| ptr)) as GLuint }
-}
+    let cam_clip_unif = prog.get_unif("cameraToClipMatrix");
 
-fn init_prog(state: &mut GLState) {
-    let mut shader_list = Vec::new();
-    shader_list.push(shaders::load_shader_file(gl::VERTEX_SHADER, "shaders/PosColorLocalTransform.vert"));
-    shader_list.push(shaders::load_shader_file(gl::FRAGMENT_SHADER, "shaders/ColorPassthrough.frag"));
-    state.program = shaders::create_program(&shader_list);
-
-    //state.pos_attr = get_attrib(state.program, "position"); // TODO: returning a non-zero value [should be 0 in this case] - I think it's an int->long issue
-    state.pos_attr = 0;
-    state.color_attr = get_attrib(state.program, "color");
-
-    state.mod_cam_unif = get_uniform(state.program, "modelToCameraMatrix");
-    state.cam_clip_unif = get_uniform(state.program, "cameraToClipMatrix");
-
-    state.frustum_scale = util::calc_frustum_scale(45.0);
+    let fs = util::calc_frustum_scale(45.0);
     let (znear, zfar) = (1.0, 100.0);
 
-    state.cam_clip_m = Matrix4::zero();
-    state.cam_clip_m.x.x = state.frustum_scale;
-    state.cam_clip_m.y.y = state.frustum_scale;
-    state.cam_clip_m.z.z = (zfar + znear) / (znear - zfar);
-    state.cam_clip_m.z.w = -1.0;
-    state.cam_clip_m.w.z = (2.0 * zfar * znear) / (znear - zfar);
+    let mut cam_clip_m = Matrix4::zero();
+    cam_clip_m.x.x = fs;
+    cam_clip_m.y.y = fs;
+    cam_clip_m.z.z = (zfar + znear) / (znear - zfar);
+    cam_clip_m.z.w = -1.0;
+    cam_clip_m.w.z = (2.0 * zfar * znear) / (znear - zfar);
 
-    gl::UseProgram(state.program);
-    unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::FALSE, mem::transmute(&state.cam_clip_m)); }
+    prog.use_prog();
+    cam_clip_unif.upload_m4f(&cam_clip_m);
     gl::UseProgram(0);
+
+    GLState {
+        program: prog,
+        pos_attr: 0, //prog.get_attrib("position"); // TODO: returning a non-zero value [should be 0 in this case] - I think it's an int->long issue
+        color_attr: prog.get_attrib("color"),
+
+        mod_cam_unif: prog.get_unif("modelToCameraMatrix"),
+        cam_clip_unif: cam_clip_unif,
+
+        frustum_scale: fs,
+        cam_clip_m: cam_clip_m,
+
+        vbo: 0,
+        ibo: 0,
+        vao: 0,
+    }
 }
 
 fn init_vao(state: &mut GLState) {
@@ -350,7 +337,7 @@ impl Hierarchy {
         //model to camera matrix stack
         let mut mcs = MatrixStack::new();
 
-        gl::UseProgram(state.program);
+        state.program.use_prog();
         gl::BindVertexArray(state.vao);
 
         mcs.trans(self.pos_base);
@@ -361,7 +348,8 @@ impl Hierarchy {
             mcs.trans(self.pos_base_left);
             mcs.scale(Vector3::new(1.0, 1.0, self.scale_base_z));
             unsafe{
-                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                state.mod_cam_unif.upload_m4f(&mcs.top());
+                //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
                 gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
             }
             mcs.pop();
@@ -372,7 +360,8 @@ impl Hierarchy {
             mcs.trans(self.pos_base_right);
             mcs.scale(Vector3::new(1.0, 1.0, self.scale_base_z));
             unsafe{
-                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                state.mod_cam_unif.upload_m4f(&mcs.top());
+                //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
                 gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
             }
             mcs.pop();
@@ -394,7 +383,8 @@ impl Hierarchy {
         mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
         mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
         unsafe {
-            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            state.mod_cam_unif.upload_m4f(&mcs.top());
+            //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
             gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
         }
         mcs.pop();
@@ -408,7 +398,8 @@ impl Hierarchy {
             mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
             mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
             unsafe {
-                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                state.mod_cam_unif.upload_m4f(&mcs.top());
+                //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
                 gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
             }
             mcs.pop();
@@ -427,7 +418,8 @@ impl Hierarchy {
         mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
         mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
         unsafe {
-            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            state.mod_cam_unif.upload_m4f(&mcs.top());
+            //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
             gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
         }
         mcs.pop();
@@ -441,7 +433,8 @@ impl Hierarchy {
             mcs.trans(Vector3::new(0.0, 0.0, self.len_finger / 2.0));
             mcs.scale(Vector3::new(self.width_finger / 2.0, self.width_finger / 2.0, self.len_finger / 2.0));
             unsafe {
-                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                state.mod_cam_unif.upload_m4f(&mcs.top());
+                //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
                 gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
             }
             mcs.pop();
@@ -461,7 +454,8 @@ impl Hierarchy {
         mcs.push();
         mcs.scale(Vector3::new(self.width_wrist / 2.0, self.width_wrist / 2.0, self.len_wrist / 2.0));
         unsafe {
-            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            state.mod_cam_unif.upload_m4f(&mcs.top());
+            //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
             gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
         }
         mcs.pop();
@@ -479,7 +473,8 @@ impl Hierarchy {
         mcs.trans(Vector3::new(0.0, 0.0, self.len_lowerarm / 2.0));
         mcs.scale(Vector3::new(self.width_lowerarm / 2.0, self.width_lowerarm / 2.0, self.len_lowerarm / 2.0));
         unsafe {
-            gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+            state.mod_cam_unif.upload_m4f(&mcs.top());
+            //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
             gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
         }
         mcs.pop();
@@ -497,7 +492,8 @@ impl Hierarchy {
             mcs.trans(Vector3::new(0.0, 0.0, self.size_upperarm / 2.0 - 1.0));
             mcs.scale(Vector3::new(1.0, 1.0, self.size_upperarm / 2.0));
             unsafe {
-                gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
+                state.mod_cam_unif.upload_m4f(&mcs.top());
+                //gl::UniformMatrix4fv(state.mod_cam_unif, 1, gl::FALSE, mem::transmute(&mcs.top()));
                 gl::DrawElements(gl::TRIANGLES, index_data.len() as i32, gl::UNSIGNED_SHORT, ptr::null());
             }
             mcs.pop();
@@ -545,9 +541,7 @@ impl Hierarchy {
 
 
 fn init() -> GLState {
-    let mut state = GLState::new();
-
-    init_prog(&mut state);
+    let mut state = init_prog();
     init_vao(&mut state);
 
     gl::Enable(gl::CULL_FACE);
@@ -609,8 +603,8 @@ fn resize(w: i32, h: i32, state: &mut GLState) {
     state.cam_clip_m.x.x = state.frustum_scale * (h as f32 / w as f32);
     state.cam_clip_m.y.y = state.frustum_scale;
 
-    gl::UseProgram(state.program);
-    unsafe { gl::UniformMatrix4fv(state.cam_clip_unif, 1, gl::FALSE, mem::transmute(&state.cam_clip_m)); }
+    state.program.use_prog();
+    state.cam_clip_unif.upload_m4f(&state.cam_clip_m);
     gl::UseProgram(0);
 
     gl::Viewport(0, 0, w as GLsizei, h as GLsizei);
@@ -670,10 +664,5 @@ fn main() {
         display(&state, &window, &robot);
     }
 
-    gl::DeleteProgram(state.program);
-    unsafe {
-        gl::DeleteBuffers(1, &state.vbo);
-        gl::DeleteBuffers(1, &state.ibo);
-        gl::DeleteVertexArrays(1, &state.vao);
-    }
+    state.delete();
 }
